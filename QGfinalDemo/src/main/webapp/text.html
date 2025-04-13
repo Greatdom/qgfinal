@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="src/js/vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <button @click="login">登录</button>
+    <button @click="find">寻找</button>
+    <input type="datetime-local" v-model="time">
+    <p>{{ time }}</p>
+<!--    <img src="http://localhost:8080/QGfinalDemo_war/CheckCodeServlet" alt="">-->
+</div>
+
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            time:"2025-04-13T18:47",
+            method:""
+        },
+        mounted() {
+
+        },
+        methods: {
+            login(){
+
+                    this.method="login";
+                    let LoadHttp;
+                    if(window.XMLHttpRequest){
+                        LoadHttp=new XMLHttpRequest();
+
+                    }else{
+                        LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                    }
+                    LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/AdminServlet");
+                    LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                    let requestBody = "method=" + encodeURIComponent(this.method);
+                    LoadHttp.send(requestBody);
+                    LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+
+                        if (event.target.readyState === 4 && event.target.status === 200) {
+
+                        }
+
+                    }
+                    this.method="";
+
+            },
+            find(){
+                this.method="find";
+                let LoadHttp;
+                if(window.XMLHttpRequest){
+                    LoadHttp=new XMLHttpRequest();
+
+                }else{
+                    LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/AdminServlet");
+                LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                let requestBody = "method=" + encodeURIComponent(this.method);
+                LoadHttp.send(requestBody);
+
+                LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+
+                    }
+
+                }
+                this.method="";
+            }
+        },
+    });
+
+</script>
+</body>
+</html>

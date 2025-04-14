@@ -5,6 +5,8 @@ import com.example.entity.Product;
 import com.example.mapper.ProductMapper;
 import org.junit.Test;
 
+import java.util.List;
+
 public class ProductMapperTest {
     @Test
     public void insert() {
@@ -21,4 +23,36 @@ public class ProductMapperTest {
         int count = productMapper.insert(product);
         System.out.println(count);
     }
+    @Test
+    public void selectList() {
+        ProductMapper productMapper = new ProductMapper();
+
+        List<Product> productList = productMapper.selectList("好人","已发布");
+        System.out.println(productList);
+    }
+    @Test
+    public void selectById() {
+        ProductMapper productMapper = new ProductMapper();
+        Product product=new Product();
+        product.setId(1);
+        product= productMapper.selectById(product);
+        System.out.println(product);
+    }
+    @Test
+    public void selectAll(){
+        ProductMapper productMapper = new ProductMapper();
+        List<Product> productList = productMapper.selectAll();
+        System.out.println(productList);
+    }
+    @Test
+    public void update() {
+        ProductMapper productMapper = new ProductMapper();
+        Product product=new Product();
+        product.setId(1);
+        product= productMapper.selectById(product);
+        product.setDescription("好人要当小丑");
+        int count = productMapper.update(product);
+        System.out.println(product);
+    }
+
 }

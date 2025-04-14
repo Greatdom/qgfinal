@@ -59,13 +59,17 @@ public Account selectSingle(Account account) {
         String updateSql = "UPDATE user SET name=?,password = ?,phone=?,email=?,avatar=?,pay_password=? WHERE username = ?";
         return CRUDUtils.update(updateSql, name,password,phone,email,avatar,payPassword,username);
     }
-    public int cancelByUsername(String username) {
-        String deleteSql = "UPDATE user SER status = ? WHERE username = ?";
-        return CRUDUtils.update(deleteSql, "已注销", username);
-    }
-    public int banByUsername(String username) {
-        String deleteSql = "UPDATE user SET status = ? WHERE username = ?";
-        return CRUDUtils.update(deleteSql, "已封禁", username);
+    public int ChangeStatus(Account account) {
+        if (account==null||account.getStatus()==null){
+            return 0;
+        }
+        if(account.getUsername()!=null){
+            String updateSql = "UPDATE user SET status=? WHERE username = ?";
+            return CRUDUtils.update(updateSql, account.getStatus(),account.getUsername());
+        }else if(account.getId()!=null){
+            String updateSql = "UPDATE user SET status=? WHERE id = ?";
+            return CRUDUtils.update(updateSql, account.getStatus(),account.getId());
+        }else return 0;
     }
     public int increasePopularity(Account account) {
         Integer popularity=account.getPopularity();

@@ -4,13 +4,13 @@ public class Comments {
     //索引
     private Integer id;
     //评分
-    private String score;
+    private Integer score;
     //评价时间
     private String commentTime;
     //评价内容
     private String content;
     //交易号
-    private String dealId;
+    private Integer dealId;
 
     public Integer getId() {
         return id;
@@ -20,13 +20,7 @@ public class Comments {
         this.id = id;
     }
 
-    public String getScore() {
-        return score;
-    }
 
-    public void setScore(String score) {
-        this.score = score;
-    }
 
     public String getCommentTime() {
         return commentTime;
@@ -44,11 +38,19 @@ public class Comments {
         this.content = content;
     }
 
-    public String getDealId() {
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
+    }
+
+    public Integer getDealId() {
         return dealId;
     }
 
-    public void setDealId(String dealId) {
+    public void setDealId(Integer dealId) {
         this.dealId = dealId;
     }
 
@@ -56,10 +58,10 @@ public class Comments {
     public String toString() {
         return "Comments{" +
                 "id=" + id +
-                ", score='" + score + '\'' +
+                ", score=" + score +
                 ", commentTime='" + commentTime + '\'' +
                 ", content='" + content + '\'' +
-                ", dealId='" + dealId + '\'' +
+                ", dealId=" + dealId +
                 '}';
     }
 }

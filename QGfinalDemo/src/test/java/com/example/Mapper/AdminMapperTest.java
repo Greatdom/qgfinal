@@ -15,7 +15,14 @@ public class AdminMapperTest {
     @Test
     public void Update(){
         AdminMapper adminMapper = new AdminMapper();
-        int count = adminMapper.update("管理员","123456","13433384487","778005729@qq.com",null,"admin");
+        Account account=new Account();
+        account.setName("管理员");
+        account.setUsername("admin");
+        account.setPassword("123456");
+        account.setEmail("admin@gmail.com");
+        account.setPhone("123456789");
+
+        int count = adminMapper.update(account);
         System.out.println(count);
     }
     @Test
@@ -27,11 +34,10 @@ public class AdminMapperTest {
     @Test
     public void selectSingle(){
         AdminMapper adminMapper = new AdminMapper();
-        Account phone= adminMapper.selectByPhone("13433384487");
-        Account username= adminMapper.selectByUsername("admin");
-        Account email= adminMapper.selectByEmail("778005729@qq.com");
-        System.out.println(phone);
-        System.out.println(username);
-        System.out.println(email);
+        Account account=new Account();
+        account.setUsername("admin");
+        Account account1=adminMapper.selectSingle(account);
+        System.out.println(account1);
+
     }
 }

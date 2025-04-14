@@ -5,6 +5,8 @@ public class Account {
     private Integer id;
     //账号
     private String username;
+    //昵称
+    private String name;
     //密码
     private String password;
     //电话
@@ -21,6 +23,16 @@ public class Account {
     private String payPassword;
     //账号在线和存在状态
     private String status;
+    //账号流量,以本人商品的评论总数为依据
+    private Integer popularity;
+
+    public Integer getPopularity() {
+        return popularity;
+    }
+
+    public void setPopularity(Integer popularity) {
+        this.popularity = popularity;
+    }
 
     public Integer getId() {
         return id;
@@ -116,5 +128,13 @@ public class Account {
                 ", payPassword='" + payPassword + '\'' +
                 ", status='" + status + '\'' +
                 '}';
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

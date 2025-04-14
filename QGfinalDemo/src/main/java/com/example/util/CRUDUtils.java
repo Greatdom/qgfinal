@@ -119,6 +119,7 @@ public class CRUDUtils {
         return stmt;
     }
 
+
     /**
      * 将ResultSet映射为对象
      * @param rs ResultSet
@@ -132,8 +133,9 @@ public class CRUDUtils {
         int columnCount = metaData.getColumnCount();
         for (int i = 1; i <= columnCount; i++) {
             String columnName = metaData.getColumnName(i);
+            String fieldName = toCamelCase(columnName); // 转换为驼峰命名格式
             try {
-                Field field = clazz.getDeclaredField(columnName);
+                Field field = clazz.getDeclaredField(fieldName);
                 field.setAccessible(true);
                 field.set(obj, rs.getObject(i));
             } catch (NoSuchFieldException e) {
@@ -164,4 +166,23 @@ public class CRUDUtils {
             e.printStackTrace();
         }
     }
+
+    private static String toCamelCase(String str) {
+        StringBuilder result = new StringBuilder();
+        boolean nextUpperCase = false;
+        for (char c : str.toCharArray()) {
+            if (c == '_') {
+                nextUpperCase = true; // 下一个字符需要大写
+            } else {
+                if (nextUpperCase) {
+                    result.append(Character.toUpperCase(c)); // 大写当前字符
+                    nextUpperCase = false;
+                } else {
+                    result.append(Character.toLowerCase(c)); // 小写当前字符
+                }
+            }
+        }
+        return result.toString();
+    }
+
 }

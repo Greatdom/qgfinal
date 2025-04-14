@@ -11,6 +11,16 @@ public class Sentence {
     private String content;
     //聊天者角色
     private String userRole;
+    //隶属会话
+    private Integer sessionId;
+
+    public Integer getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(Integer sessionId) {
+        this.sessionId = sessionId;
+    }
 
     public Integer getId() {
         return id;
@@ -60,6 +70,7 @@ public class Sentence {
                 ", sentenceTime='" + sentenceTime + '\'' +
                 ", content='" + content + '\'' +
                 ", userRole='" + userRole + '\'' +
+                ", sessionId=" + sessionId +
                 '}';
     }
 }

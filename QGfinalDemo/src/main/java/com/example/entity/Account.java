@@ -94,6 +94,14 @@ public class Account {
         this.payPassword = payPassword;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "Account{" +
@@ -106,14 +114,7 @@ public class Account {
                 ", role='" + role + '\'' +
                 ", reputation=" + reputation +
                 ", payPassword='" + payPassword + '\'' +
+                ", status='" + status + '\'' +
                 '}';
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 }

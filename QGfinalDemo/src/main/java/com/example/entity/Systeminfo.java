@@ -1,5 +1,9 @@
 package com.example.entity;
 
+import com.example.mapper.SysteminfoMapper;
+
+import java.rmi.server.ExportException;
+
 public class Systeminfo{
     private int id;
     private String role;
@@ -11,7 +15,7 @@ public class Systeminfo{
     private int sessionNum;
     private int dealNum;
     private int commentNum;
-    private boolean Initialized =false;
+    private static boolean Initialized =false;
     private static volatile Systeminfo instance = null;
     private Systeminfo(){
         if(instance != null){
@@ -19,6 +23,9 @@ public class Systeminfo{
         }
     }
     public static Systeminfo getInstance(){
+        if(!Initialized){
+            SysteminfoMapper mapper = new SysteminfoMapper();
+        }
         if(instance == null){
             synchronized (Systeminfo.class){
                 if(instance == null){
@@ -127,11 +134,11 @@ public class Systeminfo{
                 '}';
     }
 
-    public boolean isInitialized() {
+    public static boolean isInitialized() {
         return Initialized;
     }
 
-    public void setInitialized(boolean initialized) {
+    public static void setInitialized(boolean initialized) {
         Initialized = initialized;
     }
 }

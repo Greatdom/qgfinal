@@ -18,6 +18,10 @@ public class CommentsMapper {
         String selectSql="select * from comments where deal_id=?";
         return CRUDUtils.queryForList(Comments.class,selectSql,id);
     }
+    public List<Comments> selectAll(){
+        String selectSql="select * from comments";
+        return CRUDUtils.queryForList(Comments.class,selectSql);
+    }
     public Comments selectById(Integer id) {
         String selectSql="select * from comments where id=?";
         return CRUDUtils.queryForObject(Comments.class,selectSql,id);

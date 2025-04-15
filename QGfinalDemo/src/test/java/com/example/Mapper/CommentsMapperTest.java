@@ -13,7 +13,7 @@ public class CommentsMapperTest {
         Comments comments = new Comments();
         comments.setScore(1);
         comments.setCommentTime("未制作该模块");
-        comments.setContent("你才是好人呢你全家都是好人！");
+        comments.setContent("HHH");
         comments.setDealId(1);
         int count = commentsMapper.insert(comments);
         System.out.println(count);
@@ -24,5 +24,11 @@ public class CommentsMapperTest {
         CommentsMapper commentsMapper = new CommentsMapper();
         List<Comments> comments = commentsMapper.selectByDeal(1);
         System.out.println(comments);
+    }
+    @Test
+    public void deleteById(){
+        CommentsMapper commentsMapper = new CommentsMapper();
+        int count = commentsMapper.deleteById(2);
+        System.out.println(count);
     }
 }

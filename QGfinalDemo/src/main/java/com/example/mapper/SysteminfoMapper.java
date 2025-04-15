@@ -10,8 +10,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class SysteminfoMapper {
-    public Systeminfo initial() {
-        Systeminfo systeminfo=Systeminfo.getInstance();
+
+
+    static{
+        Systeminfo systeminfo = null;
         String sql = "select * from systeminfo";
 
         try {
@@ -19,6 +21,8 @@ public class SysteminfoMapper {
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
+                Systeminfo.setInitialized(true);
+                systeminfo = Systeminfo.getInstance();
                 int id = rs.getInt("id");
                 String role=rs.getString("role");
                 int adminNum=rs.getInt("admin_num");
@@ -39,7 +43,45 @@ public class SysteminfoMapper {
                 systeminfo.setSessionNum(sessionNum);
                 systeminfo.setDealNum(dealNum);
                 systeminfo.setCommentNum(commentNum);
-                systeminfo.setInitialized(true);
+            }
+            rs.close();
+            DataSourceManager.close(conn);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Systeminfo initial() {
+        Systeminfo systeminfo = null;
+        String sql = "select * from systeminfo";
+
+        try {
+            Connection conn = DataSourceManager.getConn();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                Systeminfo.setInitialized(true);
+                systeminfo = Systeminfo.getInstance();
+                int id = rs.getInt("id");
+                String role=rs.getString("role");
+                int adminNum=rs.getInt("admin_num");
+                int userNum=rs.getInt("user_num");
+                int productNum=rs.getInt("product_num");
+                double totalMoney=rs.getDouble("total_money");
+                int reportNum=rs.getInt("report_num");
+                int sessionNum=rs.getInt("session_num");
+                int dealNum=rs.getInt("deal_num");
+                int commentNum=rs.getInt("comment_num");
+                systeminfo.setId(id);
+                systeminfo.setRole(role);
+                systeminfo.setAdminNum(adminNum);
+                systeminfo.setUserNum(userNum);
+                systeminfo.setProductNum(productNum);
+                systeminfo.setTotalMoney(totalMoney);
+                systeminfo.setReportNum(reportNum);
+                systeminfo.setSessionNum(sessionNum);
+                systeminfo.setDealNum(dealNum);
+                systeminfo.setCommentNum(commentNum);
             }
             rs.close();
             DataSourceManager.close(conn);
@@ -52,7 +94,7 @@ public class SysteminfoMapper {
         if(systeminfo==null){
             return 0;
         }
-        if(systeminfo.isInitialized()){
+        if(Systeminfo.isInitialized()){
             String updateSql="UPDATE systeminfo SET admin_num=?,user_num=?,product_num=?,total_money=?,report_num=?,session_num=?,deal_num=?,comment_num=?";
             return CRUDUtils.update(updateSql,systeminfo.getAdminNum(),systeminfo.getUserNum(),systeminfo.getProductNum(),systeminfo.getTotalMoney(),systeminfo.getReportNum(),systeminfo.getSessionNum(),systeminfo.getDealNum(),systeminfo.getCommentNum());
         }else{

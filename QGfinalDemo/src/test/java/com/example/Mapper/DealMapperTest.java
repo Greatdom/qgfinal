@@ -18,4 +18,12 @@ public class DealMapperTest {
         int count = dealMapper.insert(deal);
         System.out.println(count);
     }
+    @Test
+    public void selectList(){
+        DealMapper dealMapper = new DealMapper();
+        System.out.println("selectByUser"+ dealMapper.selectByUser(1));
+        System.out.println("selectByProduct"+ dealMapper.selectByProduct(1));
+        System.out.println("selectAll"+ dealMapper.selectAll());
+        System.out.println("selectById"+ dealMapper.selectById(1));
+    }
 }

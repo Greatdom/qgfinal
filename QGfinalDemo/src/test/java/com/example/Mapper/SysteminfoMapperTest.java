@@ -19,4 +19,16 @@ public class SysteminfoMapperTest {
         int count = systeminfoMapper.update(systeminfo);
         System.out.println(count);
     }
+    @Test
+    public void initialStatic(){
+        SysteminfoMapper systeminfoMapper = new SysteminfoMapper();
+        System.out.println(Systeminfo.getInstance());
+    }
+    @Test
+    public void test(){
+        Systeminfo systeminfo=Systeminfo.getInstance();
+        System.out.println(systeminfo);
+        Systeminfo www=Systeminfo.getInstance();
+        System.out.println(www);
+    }
 }

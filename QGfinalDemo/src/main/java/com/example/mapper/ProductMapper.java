@@ -71,7 +71,7 @@ public class ProductMapper {
         String updateSql = "UPDATE product SET publish_status=? WHERE id = ?";
         return CRUDUtils.update(updateSql,publishStatus,id);
     }
-    public int decreaseStock(Product product) {
+    public int changeStock(Product product) {
         if(product==null){
             return 0;
         }
@@ -79,5 +79,9 @@ public class ProductMapper {
         Integer stock = product.getStock();
         String updateSql = "UPDATE product SET stock=? WHERE id = ?";
         return CRUDUtils.update(updateSql,stock,id);
+    }
+    public int affectScore(Product product) {
+        return 0;
+        //当被评论时加1流量和相应的总评分
     }
 }

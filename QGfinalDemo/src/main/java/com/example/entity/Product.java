@@ -23,6 +23,16 @@ public class Product {
     private Integer userId;
     //商品评价
     private Integer score;
+    //商品流量
+    private Integer popularity;
+
+    public Integer getPopularity() {
+        return popularity;
+    }
+
+    public void setPopularity(Integer popularity) {
+        this.popularity = popularity;
+    }
 
     public Integer getId() {
         return id;
@@ -126,6 +136,7 @@ public class Product {
                 ", publishStatus='" + publishStatus + '\'' +
                 ", userId=" + userId +
                 ", score=" + score +
+                ", popularity=" + popularity +
                 '}';
     }
 }

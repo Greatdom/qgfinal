@@ -41,22 +41,5 @@ public class UserMapperTest {
         Account account1=userMapper.selectSingle(account);
         System.out.println(account1);
     }
-    @Test
-    public void increasePopularity(){
-        UserMapper userMapper = new UserMapper();
-        Account account=new Account();
-        account.setUsername("user");
-        account=userMapper.selectSingle(account);
-        int count=userMapper.increasePopularity(account);
-        System.out.println(count);
-    }
-    @Test
-    public void affectReputation(){
-        UserMapper userMapper = new UserMapper();
-        Account account=new Account();
-        account.setUsername("user");
-        account=userMapper.selectSingle(account);
-        int count=userMapper.affectReputation(account,1);
-        System.out.println(count);
-    }
+
 }

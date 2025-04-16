@@ -88,21 +88,5 @@ public Account selectSingle(Account account) {
             return CRUDUtils.update(updateSql, account.getStatus(),account.getId());
         }else return 0;
     }
-    public int increasePopularity(Account account) {
-        Integer popularity=account.getPopularity();
-        popularity = popularity == null ? 0 : popularity;
-        popularity++;
-        String username = account.getUsername();
-        String updateSql="UPDATE user SET popularity = ? WHERE username = ?";
-        return CRUDUtils.update(updateSql, popularity, username);
-    }
-    public int affectReputation(Account account,Integer score) {
-        Integer reputation=account.getReputation();
-        String username = account.getUsername();
-        reputation = reputation == null ? 0 : reputation;
-        score = score == null ? 0 : score;
-        reputation+=score;
-        String updateSql="UPDATE user SET reputation = ? WHERE username = ?";
-        return CRUDUtils.update(updateSql, reputation, username);
-    }
+
 }

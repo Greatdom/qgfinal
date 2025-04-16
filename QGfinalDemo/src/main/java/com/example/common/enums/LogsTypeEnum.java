@@ -4,10 +4,11 @@ public enum LogsTypeEnum {
     LOGIN("登录"),
     REGISTER("注册"),
     UPDATE_PASSWORD("修改密码"),
-    ADD("新增"),
     UPDATE("修改"),
-    COPY("复制"),
-    DELETE("删除");
+    DELETE("删除"),
+    PRODUCT("发布商品"),
+    DEAL("购买商品"),
+    COMMENT("评论操作");
 
     private String value;
 

@@ -77,16 +77,16 @@ public class AdminMapper {
         String updateSql = "UPDATE admin SET name=?,password = ?,phone=?,email=?,avatar=? WHERE username = ?";
         return CRUDUtils.update(updateSql, name,password,phone,email,avatar,username);
     }
-    public int ChangeStatus(Account account) {
-        if (account==null||account.getStatus()==null){
-            return 0;
-        }
-        if(account.getUsername()!=null){
-            String updateSql = "UPDATE admin SET status=? WHERE username = ?";
-            return CRUDUtils.update(updateSql, account.getStatus(),account.getUsername());
-        }else if(account.getId()!=null){
-            String updateSql = "UPDATE admin SET status=? WHERE id = ?";
-            return CRUDUtils.update(updateSql, account.getStatus(),account.getId());
-        }else return 0;
-    }
+//    public int ChangeStatus(Account account) {
+//        if (account==null||account.getStatus()==null){
+//            return 0;
+//        }
+//        if(account.getUsername()!=null){
+//            String updateSql = "UPDATE admin SET status=? WHERE username = ?";
+//            return CRUDUtils.update(updateSql, account.getStatus(),account.getUsername());
+//        }else if(account.getId()!=null){
+//            String updateSql = "UPDATE admin SET status=? WHERE id = ?";
+//            return CRUDUtils.update(updateSql, account.getStatus(),account.getId());
+//        }else return 0;
+//    }
 }

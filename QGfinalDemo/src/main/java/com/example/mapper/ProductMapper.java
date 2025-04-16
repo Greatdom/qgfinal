@@ -1,6 +1,8 @@
 package com.example.mapper;
 
 
+import com.example.entity.Account;
+import com.example.entity.Comments;
 import com.example.entity.Product;
 import com.example.util.CRUDUtils;
 
@@ -80,8 +82,34 @@ public class ProductMapper {
         String updateSql = "UPDATE product SET stock=? WHERE id = ?";
         return CRUDUtils.update(updateSql,stock,id);
     }
-    public int affectScore(Product product) {
-        return 0;
-        //当被评论时加1流量和相应的总评分
+    public int whileDealing(Product product, Account account) {
+        if(product==null||account==null){
+            return 0;
+        }
+        String updateSql = "UPDATE product SET popularity=?,score=? WHERE id = ?";
+        int productCount = CRUDUtils.update(updateSql,product.getPopularity()+1,product.getScore()+1,product.getId());
+        String accSql="Update user set popularity=?,reputation=? where id=?";
+        int accountCount = CRUDUtils.update(accSql,account.getPopularity()+1,account.getReputation()+1,account.getId());
+        return (accountCount==1&&productCount==1)?1:0;
+    }
+    public int whileCommenting(Product product, Comments comments , Account account) {
+        if(product==null||comments==null||account==null){
+            return 0;
+        }
+        String updateSql = "UPDATE product SET score=? WHERE id = ?";
+        int productCount = CRUDUtils.update(updateSql,comments.getScore()+product.getScore(),product.getId());
+        String accSql="Update user set reputation=? where id=?";
+        int accountCount = CRUDUtils.update(accSql,account.getReputation()+comments.getScore(),account.getId());
+        return (accountCount==1&&productCount==1)?1:0;
+    }
+    public int whileCancelCommenting(Product product, Comments comments, Account account) {
+        if(product==null||comments==null||account==null){
+            return 0;
+        }
+        String updateSql = "UPDATE product SET score=? WHERE id = ?";
+        int productCount = CRUDUtils.update(updateSql,product.getScore()-comments.getScore(),product.getId());
+        String accSql="Update user set reputation=? where id=?";
+        int accountCount = CRUDUtils.update(accSql,account.getReputation()-comments.getScore(),account.getId());
+        return (accountCount==1&&productCount==1)?1:0;
     }
 }

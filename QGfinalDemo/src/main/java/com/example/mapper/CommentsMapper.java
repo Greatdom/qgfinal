@@ -26,6 +26,13 @@ public class CommentsMapper {
         String selectSql="select * from comments where id=?";
         return CRUDUtils.queryForObject(Comments.class,selectSql,id);
     }
+    public Comments selectByDeal(Comments comments) {
+        if(comments==null||comments.getDealId()==null){
+            return null;
+        }
+        String selectSql="select * from comments where deal_id=?";
+        return CRUDUtils.queryForObject(Comments.class,selectSql,comments.getDealId());
+    }
     public int deleteById(Integer id) {
         String deleteSql="delete from comments where id=?";
         return CRUDUtils.delete(deleteSql,id);

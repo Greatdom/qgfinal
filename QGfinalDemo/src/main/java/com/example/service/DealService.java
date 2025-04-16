@@ -1,14 +1,23 @@
 package com.example.service;
 
 import com.example.entity.Deal;
+import com.example.entity.Systeminfo;
 import com.example.mapper.DealMapper;
+import com.example.mapper.SysteminfoMapper;
 
 import java.util.List;
 
 public class DealService {
     DealMapper dealMapper = new DealMapper();
     public int add(Deal deal) {
-        return dealMapper.insert(deal);
+        int count = dealMapper.insert(deal);
+        if (count > 0) {
+            Systeminfo systeminfo = Systeminfo.getInstance();
+            systeminfo.setDealNum(systeminfo.getDealNum()+1);
+            SysteminfoMapper systeminfoMapper = new SysteminfoMapper();
+            systeminfoMapper.update(systeminfo);
+        }
+        return count;
     }
     public List<Deal> selectByUser(int id){
         return dealMapper.selectByUser(id);

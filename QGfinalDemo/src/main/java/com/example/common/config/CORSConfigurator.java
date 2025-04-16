@@ -1,4 +1,4 @@
-package com.example.common;
+package com.example.common.config;
 
 import javax.websocket.HandshakeResponse;
 import javax.websocket.server.HandshakeRequest;

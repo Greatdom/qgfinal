@@ -1,4 +1,4 @@
-package com.example.common;
+package com.example.common.config;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;

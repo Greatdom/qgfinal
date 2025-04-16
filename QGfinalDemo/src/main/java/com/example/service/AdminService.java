@@ -1,7 +1,9 @@
 package com.example.service;
 
 import com.example.entity.Account;
+import com.example.entity.Systeminfo;
 import com.example.mapper.AdminMapper;
+import com.example.mapper.SysteminfoMapper;
 
 import java.util.List;
 
@@ -13,7 +15,14 @@ public class AdminService {
         if(dbAccount != null){
             return 0;
         }else{
-            return adminMapper.insert(account.getUsername(),account.getPassword());
+            int count = adminMapper.insert(account.getUsername(),account.getPassword());
+            if(count > 0){
+                Systeminfo systeminfo=Systeminfo.getInstance();
+                systeminfo.setAdminNum(systeminfo.getAdminNum()+1);
+                SysteminfoMapper systeminfoMapper=new SysteminfoMapper();
+                systeminfoMapper.update(systeminfo);
+            }
+            return count;
         }
     }
 

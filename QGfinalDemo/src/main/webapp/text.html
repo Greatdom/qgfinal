@@ -36,7 +36,7 @@
                     }else{
                         LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
                     }
-                    LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/AdminServlet");
+                    LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/WebsServlet");
                     LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
                     let requestBody = "method=" + encodeURIComponent(this.method);
                     LoadHttp.send(requestBody);
@@ -59,7 +59,7 @@
                 }else{
                     LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
                 }
-                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/AdminServlet");
+                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/WebsServlet");
                 LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
                 let requestBody = "method=" + encodeURIComponent(this.method);
                 LoadHttp.send(requestBody);

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="../js/vue.js"></script>
+  <link rel="stylesheet" href="../asset/css/front.css">
+<!--  <script src="../js/global.js"></script>-->
+  <title>登录界面</title>
+</head>
+<body style=" background-color: blanchedalmond;
+    background-image: url(../asset/img/background.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;">
+<div id="app">
+  <div class="form">
+    <h2 style="display:block;width:100%;text-align:center;padding:10px 0;">登录界面</h2>
+    <div class="formInputText">
+      <label for="LoginUserName"></label>
+      <input id="LoginUserName" type="text" placeholder="请输入用户名" v-model="Username">
+    </div>
+    <div class="formInputText">
+      <label for="LoginPassWord"></label>
+      <input id="LoginPassWord" type="text" placeholder="请输入密码" v-model="Password">
+    </div>
+
+    <div class="formSelect">
+      <strong>角色:</strong>
+      <label>
+        <input type="radio" value="ADMIN" v-model="Role" >管理员
+        <input type="radio" value="STUDENT" v-model="Role" >用户
+      </label>
+    </div>
+    <div class="formSelect">
+      <strong>记住我七天:</strong>
+      <input type="checkbox" value="true" v-model="Remember">
+    </div>
+
+    <div style="text-align: end"><p>没有账号？<strong>注册</strong></p></div>
+    <div>
+      <button class="formButton" @click="Login">登录</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  const app=new Vue({
+    el:'#app',
+    data:{
+      Username:"",
+      Password:"",
+      Phone:"",
+      Email:"",
+      Role:"USER",
+      Remember:false
+    },
+    mounted(){
+
+    },
+    methods: {
+      Load(){
+        this.Username="";
+        this.Password="";
+        this.Phone="";
+        this.Email="";
+        this.Role="USER";
+        this.Remember=false;
+      },
+      Login(){
+
+      }
+
+    }
+  })
+
+</script>
+
+</body>
+</html>

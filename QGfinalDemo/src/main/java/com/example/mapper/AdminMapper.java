@@ -15,34 +15,52 @@ public class AdminMapper {
         String email = account.getEmail();
         String phone = account.getPhone();
         Integer id=account.getId();
+        Account result = null;
         if(id!=null&&id>0){
             String selectSql = "SELECT * FROM admin WHERE id=?";
             return CRUDUtils.queryForObject(Account.class, selectSql, id);
         }else
-        if(username==null&&email==null&&phone==null){
-            return null;
-        }else if(username==null&&email==null){
-            String selectSql = "SELECT * FROM admin WHERE phone = ?";
-        return CRUDUtils.queryForObject(Account.class, selectSql, phone);
-        }else if(username==null&&phone==null){
-            String selectSql = "SELECT * FROM admin WHERE email = ?";
-        return CRUDUtils.queryForObject(Account.class, selectSql, email);
-        }else if(phone==null&&email==null){
-            String selectSql = "SELECT * FROM admin WHERE username = ?";
-        return CRUDUtils.queryForObject(Account.class, selectSql, username);
-        }else if(username==null){
-            String selectSql = "SELECT * FROM admin WHERE phone = ? and email = ?";
-            return CRUDUtils.queryForObject(Account.class, selectSql, phone, email);
-        }else if(email==null){
-            String selectSql = "SELECT * FROM admin WHERE username = ? and phone = ?";
-            return CRUDUtils.queryForObject(Account.class, selectSql, username, phone);
-        }else if(phone==null){
-            String selectSql = "SELECT * FROM admin WHERE username = ? and email = ?";
-            return CRUDUtils.queryForObject(Account.class, selectSql, username, email);
-        }else{
-            String selectSql = "SELECT * FROM admin WHERE phone = ? and email = ? and username = ?";
-            return CRUDUtils.queryForObject(Account.class, selectSql, phone, email, username);
+        {
+            if(username==null&&email==null&&phone==null){
+                return null;
+            }
+            if(username==null&&email==null){
+                String selectSql = "SELECT * FROM admin WHERE phone = ?";
+                result = CRUDUtils.queryForObject(Account.class, selectSql, phone);
+                if(result!=null)return result;
+            }
+            if(username==null&&phone==null){
+                String selectSql = "SELECT * FROM admin WHERE email = ?";
+                result = CRUDUtils.queryForObject(Account.class, selectSql, email);
+                if(result!=null)return result;
+            }
+            else if(phone==null&&email==null){
+                String selectSql = "SELECT * FROM admin WHERE username = ?";
+                result = CRUDUtils.queryForObject(Account.class, selectSql, username);
+                if(result!=null)return result;
+            }
+            if(username==null){
+                String selectSql = "SELECT * FROM admin WHERE phone = ? and email = ?";
+                result = CRUDUtils.queryForObject(Account.class, selectSql, phone, email);
+                if(result!=null)return result;
+            }
+            if(email==null){
+                String selectSql = "SELECT * FROM admin WHERE username = ? and phone = ?";
+                result = CRUDUtils.queryForObject(Account.class, selectSql, username, phone);
+                if(result!=null)return result;
+            }
+            if(phone==null){
+                String selectSql = "SELECT * FROM admin WHERE username = ? and email = ?";
+                result = CRUDUtils.queryForObject(Account.class, selectSql, username, email);
+                if(result!=null)return result;
+            }
+            {
+                String selectSql = "SELECT * FROM admin WHERE phone = ? and email = ? and username = ?";
+                result = CRUDUtils.queryForObject(Account.class, selectSql, phone, email, username);
+                return result;
+            }
         }
+
     }
     public List<Account> selectAll(){
         String selectSql = "SELECT * FROM admin";

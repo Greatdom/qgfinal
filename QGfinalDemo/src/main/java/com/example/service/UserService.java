@@ -42,7 +42,22 @@ public class UserService {
     }
     public int register(Account account) {return add(account);}
 
-    public int update(Account account) {return userMapper.update(account);}
+    public int update(Account account) {
+        Account username = new Account();
+        username.setUsername(account.getUsername());
+        Account email = new Account();
+        email.setEmail(account.getEmail());
+        Account phone = new Account();
+        phone.setPhone(account.getPhone());
+        username = userMapper.selectSingle(username);
+        email = userMapper.selectSingle(email);
+        phone = userMapper.selectSingle(phone);
+        if(username != null || email != null || phone != null){
+            return 0;
+        }else{
+            return userMapper.update(account);
+        }
+    }
 
     public List<Account> selectAll(){return userMapper.selectAll();}
 

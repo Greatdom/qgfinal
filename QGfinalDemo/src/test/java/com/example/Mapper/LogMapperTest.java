@@ -2,6 +2,7 @@ package com.example.Mapper;
 
 import com.example.entity.Log;
 import com.example.mapper.LogMapper;
+import com.example.util.TimeUtil;
 import org.junit.Test;
 
 import java.util.Date;
@@ -16,7 +17,7 @@ public class LogMapperTest {
         log.setOperateType("注册");
         log.setOperateUsername("admin");
         log.setIp("127.0.0.1");
-        log.setOperateTime("未制作该模块");
+        log.setOperateTime(TimeUtil.getTime());
         int count = logMapper.insert(log);
         System.out.println(count);
     }

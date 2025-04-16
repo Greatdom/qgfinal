@@ -2,6 +2,7 @@ package com.example.Mapper;
 
 import com.example.entity.Comments;
 import com.example.mapper.CommentsMapper;
+import com.example.util.TimeUtil;
 import org.junit.Test;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public class CommentsMapperTest {
         CommentsMapper commentsMapper = new CommentsMapper();
         Comments comments = new Comments();
         comments.setScore(1);
-        comments.setCommentTime("未制作该模块");
+        comments.setCommentTime(TimeUtil.getTime());
         comments.setContent("HHH");
         comments.setDealId(1);
         int count = commentsMapper.insert(comments);

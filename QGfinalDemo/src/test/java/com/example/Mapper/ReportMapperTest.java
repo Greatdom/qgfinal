@@ -2,6 +2,7 @@ package com.example.Mapper;
 
 import com.example.entity.Report;
 import com.example.mapper.ReportMapper;
+import com.example.util.TimeUtil;
 import org.junit.Test;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public class ReportMapperTest {
     public void insert() {
         ReportMapper reportMapper = new ReportMapper();
         Report report = new Report();
-        report.setReportTime("未制作该模块");
+        report.setReportTime(TimeUtil.getTime());
         report.setReportType("举报商家");
         report.setContent("他老是发好人卡我受不了了,快BAN掉他!");
         report.setResult("待处理");

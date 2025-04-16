@@ -3,6 +3,7 @@ package com.example.Mapper;
 import com.example.entity.Account;
 import com.example.entity.Product;
 import com.example.mapper.ProductMapper;
+import com.example.util.TimeUtil;
 import org.junit.Test;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public class ProductMapperTest {
         product.setPrice(55.5);
         product.setStock(12);
         product.setCategory("文具");
-        product.setPublishTime("尚未制作时间生成模块");
+        product.setPublishTime(TimeUtil.getTime());
         product.setPublishStatus("已发布");
         product.setUserId(1);
         int count = productMapper.insert(product);

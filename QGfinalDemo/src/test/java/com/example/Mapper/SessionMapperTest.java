@@ -3,6 +3,7 @@ package com.example.Mapper;
 import com.example.entity.Account;
 import com.example.entity.Session;
 import com.example.mapper.SessionMapper;
+import com.example.util.TimeUtil;
 import org.junit.Test;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public class SessionMapperTest {
     public void insert() {
         SessionMapper sessionMapper = new SessionMapper();
         Session session = new Session();
-        session.setSessionTime("未制作该模块");
+        session.setSessionTime(TimeUtil.getTime());
         session.setHeadId(1);
         session.setHindId(1);
         session.setHeadRole("ADMIN");

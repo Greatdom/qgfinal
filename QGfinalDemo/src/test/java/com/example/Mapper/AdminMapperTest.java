@@ -18,9 +18,9 @@ public class AdminMapperTest {
         Account account=new Account();
         account.setName("管理员");
         account.setUsername("admin");
-        account.setPassword("123456");
-        account.setEmail("admin@gmail.com");
-        account.setPhone("123456789");
+        account.setPassword("admin");
+        account.setEmail("778005729@qq.com");
+        account.setPhone("13433384487");
 
         int count = adminMapper.update(account);
         System.out.println(count);

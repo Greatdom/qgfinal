@@ -12,8 +12,9 @@ public enum ResultCodeEnum {
     USER_EXIST_ERROR("5001", "用户名已存在"),
     USER_NOT_LOGIN("5002", "用户未登录"),
     USER_ACCOUNT_ERROR("5003", "账号或密码错误"),
-    USER_NOT_EXIST_ERROR("5004", "用户不存在"),
+    USER_NOT_EXIST_ERROR("5004", "用户似乎不存在"),
     PARAM_PASSWORD_ERROR("5005", "原密码输入错误"),
+    CHECK_CODE_ERROR("5006","验证码错误");
     ;
 
     public String code;

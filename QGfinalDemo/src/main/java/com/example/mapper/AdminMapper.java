@@ -16,6 +16,10 @@ public class AdminMapper {
         String phone = account.getPhone();
         Integer id=account.getId();
         Account result = null;
+        if(username!=null && username.isEmpty())username=null;
+        if(email!=null && email.isEmpty())email=null;
+        if(phone!=null && phone.isEmpty())phone=null;
+
         if(id!=null&&id>0){
             String selectSql = "SELECT * FROM admin WHERE id=?";
             return CRUDUtils.queryForObject(Account.class, selectSql, id);

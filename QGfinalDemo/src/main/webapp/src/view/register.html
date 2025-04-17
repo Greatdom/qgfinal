@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="../js/vue.js"></script>
+    <link rel="stylesheet" href="../asset/css/global.css">
+    <title>注册界面</title>
+</head>
+<body style=" background-color: blanchedalmond;
+    background-image: url(../asset/img/registerbg.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;">
+<div id="app">
+    <div class="form">
+        <h2 style="display:block;width:100%;text-align:center;padding:10px 0;">注册界面</h2>
+        <div class="formInputText">
+            <label for="LoginUserName"></label>
+            <input id="LoginUserName" type="text" placeholder="请输入用户名" v-model="Username">
+        </div>
+        <div class="formInputText">
+            <label for="LoginPassWord"></label>
+            <input id="LoginPassWord" type="text" placeholder="请输入密码" v-model="Password">
+        </div>
+
+        <div class="formSelect">
+            <strong>角色:</strong>
+            <label>
+                <input type="radio" value="ADMIN" v-model="Role" >管理员
+                <input type="radio" value="USER" v-model="Role" >用户
+            </label>
+        </div>
+
+
+        <div class="formInputText" >
+            <strong>验证码:</strong>
+            <label for="CheckCode"></label>
+            <input id="CheckCode" type="text" placeholder="验证码" v-model="CheckCode" style="width:40%;display: inline-block">
+            <img  id="CheckCodeImage" src="http://localhost:8080/QGfinalDemo_war/CheckCodeServlet">
+            <strong @click="CheckCodeMethod">看不清?</strong>
+        </div>
+
+
+        <div style="text-align: end"><p @click="TurnToLogin">已有账号？<strong>登录</strong></p></div>
+        <div>
+            <button class="formButton" @click="Register">注册</button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    const app=new Vue({
+        el:'#app',
+        data:{
+            Username:"",
+            Password:"",
+            Role:"USER",
+            CheckCode:"",
+        },
+        mounted(){
+
+        },
+        methods: {
+            Load(){
+                this.Username="";
+                this.Password="";
+                this.Role="USER";
+                this.CheckCode="";
+            },
+            CheckCodeMethod(){
+                const checkCodeImg = document.querySelector("#CheckCodeImage");
+                checkCodeImg.src = "http://localhost:8080/QGfinalDemo_war/CheckCodeServlet?" + new Date().getTime();
+            },
+            Register(){
+
+
+                // 字母、数字或下划线的组合，且长度在4到20个字符之间
+                const usernameRegex = /^[a-zA-Z0-9_]{4,20}$/;
+                const passwordRegex = /^[a-zA-Z0-9_]{4,20}$/;
+                this.Username=this.Username.trim();
+                this.Password=this.Password.trim();
+                this.CheckCode=this.CheckCode.trim();
+                if (!this.Username) {
+                    alert("用户名不能为空！");
+                        return;
+                } else if (!usernameRegex.test(this.Username)) {
+                    alert("用户名格式不正确！用户名必须是4到20个字符，包含字母、数字或下划线。");
+                    return;
+                }
+                if (!this.Password) {
+                    alert("密码不能为空！");
+                    return;
+                } else if (!passwordRegex.test(this.Password)) {
+                    alert("密码格式不正确！密码必须是4到20个字符，包含字母、数字或下划线。");
+                    return;
+                }
+
+                let RegisterHttp;
+                if(window.XMLHttpRequest){
+                    RegisterHttp=new XMLHttpRequest();
+
+                }else{
+                    RegisterHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                RegisterHttp.open("POST","http://localhost:8080/QGfinalDemo_war/WebsServlet");
+                RegisterHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+                let requestBody = "username=" + encodeURIComponent(this.Username)
+                    + "&password=" + encodeURIComponent(this.Password)
+                    + "&role=" + encodeURIComponent(this.Role)
+                    + "&checkcode=" + encodeURIComponent(this.CheckCode)
+                    + "&method=register";
+                RegisterHttp.send(requestBody);
+                RegisterHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        this.CurrentUser= JSON.parse(event.target.responseText);
+                        console.log(this.CurrentUser);
+                        if(this.CurrentUser.code==="200"){
+                            alert(this.CurrentUser.msg);
+                            this.TurnToLogin();
+                        }else{
+                            alert(this.CurrentUser.msg);
+                            this.TurnToLogin();
+                        }
+
+
+                    }
+                }
+
+
+
+            },
+            TurnToLogin(){
+                window.location.href = "login.html";
+            }
+        }
+    })
+
+</script>
+
+</body>
+</html>

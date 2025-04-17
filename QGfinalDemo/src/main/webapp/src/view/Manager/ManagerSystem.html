@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>后台-系统数据</title>
+    <script src="../../js/vue.js"></script>
+    <link rel="stylesheet" href="../../asset/css/global.css">
+</head>
+<body>
+<div id="app" class="Home">
+    <div class="header">
+
+        <a href="#" class="ICON">
+            <img src="../../asset/img/ICON.png" alt="二手市场" style="position:absolute;bottom:22px">
+            <strong style="position:absolute;left:60px;bottom:20px">二手市场</strong>
+        </a>
+
+        <h2 style="position: absolute;left:250px;top:14px;color:whitesmoke">后台 > 系统数据记录</h2>
+
+        <button @click="logout"><strong>退出登录</strong></button>
+
+    </div>
+
+    <div class="left">
+        <a href="ManagerHome.html"><strong>查看修改个人信息</strong></a>
+        <a href="ManagerAdmin.html"><strong>所有管理员信息</strong></a>
+        <a href="ManagerUser.html"><strong>所有用户信息</strong></a>
+        <a href="ManagerProduct.html"><strong>所有商品信息</strong></a>
+        <a href="ManagerDeal.html"><strong>所有订单信息</strong></a>
+        <a href="ManagerComment.html"><strong>查看所有评论</strong></a>
+        <!--        涉嫌侵犯隐私故不予制作这两个模块-->
+        <!--        <a href="ManagerSession.html"><strong>查看所有私聊</strong></a>-->
+        <!--        <a href="ManagerSentence.html"><strong>查看所有私聊消息</strong></a>-->
+        <a href="ManagerLog.html"><strong>所有日志信息</strong></a>
+        <a href="ManagerSystem.html" style="border-right: darkcyan solid 5px"><strong>系统数据记录</strong></a>
+
+    </div>
+    <div class="right">
+
+    </div>
+
+
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+
+        },
+        mounted() {
+
+        },
+        methods:{
+            logout(){
+
+            }
+        }
+    });
+</script>
+</body>
+</html>

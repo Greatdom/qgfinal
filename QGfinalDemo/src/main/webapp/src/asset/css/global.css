@@ -116,3 +116,54 @@
 
 }
 
+.Home .right .updateButton{
+    color:black;
+    background-color: skyblue;
+    border:black solid 2px;
+}
+.Home .right .updateButton:hover{
+    color:steelblue;
+    background-color: #a2b8cf;
+    border:aliceblue solid 2px;
+}
+
+/*意图只能通过点击关闭按钮关闭表单，故设置无法点击表单外面的内容*/
+.Home .HoldForm{
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    z-index: 20;
+    background-color: rgba(70, 130, 180, 0.6);
+}
+.Home .updateForm .form{
+    width: 32%;
+    background-color: rgba(255, 255, 255, 0.6);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius:10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding:20px;
+}
+.Home .updateForm .form button{
+    display:block;
+    border:none;
+    background-color: lightgray;
+    margin:10px auto;
+    width:60%;
+    height:40px;
+    font-size:24px;
+    border-radius:6px;
+}
+.Home .form .inputText input{
+    display:inline-block;
+    border-radius:4px;
+    width:70%;
+    height:30px;
+    padding-left:15px;
+    background-color: rgba(203, 225, 232, 0.6);
+    margin:8px auto;
+    border:none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}

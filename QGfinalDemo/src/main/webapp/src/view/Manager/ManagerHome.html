@@ -41,13 +41,49 @@
             <!--            <p>用户名:{{currentUser.username ? currentUser.username : '无用户名'}}</p>-->
             <!--            <p>密码:{{currentUser.password ? currentUser.password : '无密码'}}</p>-->
             <p>账号: {{ currentUser?.username || '无账号' }}</p>
-            <p>密码: {{ currentUser?.password || '无密码' }}</p>
             <p>姓名:{{ currentUser?.name||'无姓名' }}</p>
             <p>电话:{{ currentUser?.phone||'无电话' }}</p>
             <p>邮箱:{{ currentUser?.email||'无邮箱' }}</p>
             <p>ID:{{ currentUser?.id||'无ID' }}</p>
             <p>角色:{{ currentUser?.role||'无角色' }}</p>
             <p></p>
+        </div>
+        <strong v-show="!currentUser">修改个人信息</strong><br>
+        <button v-show="!currentUser" class="updateButton" @click="ShowForm"><strong>修改个人信息</strong></button>
+        <strong v-show="!currentUser">未登录用户无法修改个人信息</strong><br>
+        <button v-show="!currentUser"
+                style="color:grey;background-color: skyblue;border:gray solid 2px">
+            修改个人信息</button>
+    </div>
+
+    <div v-show="Form" class="HoldForm">
+        <div class="form">
+            <h2 style="display:block;width:100%;text-align:center;padding:10px 0;">修改个人信息</h2>
+
+            <div class="inputText">
+                <strong>（未制作上传头像版块）</strong>
+            </div>
+            <div class="inputText">
+                <strong style="margin:0 8px">昵称:</strong><input type="text" placeholder="请输入新昵称" v-model="Name">
+            </div>
+            <div class="inputText">
+                <strong style="margin:0 8px">旧密码:</strong><input type="password" placeholder="请输入旧密码" v-model="OriginalPassword">
+            </div>
+            <div class="inputText">
+                <strong style="margin:0 8px">新密码:</strong><input type="password" placeholder="请输入新密码" v-model="NewPassword">
+            </div>
+            <div class="inputText">
+                <strong style="margin:0 8px">邮箱:</strong><input type="text" placeholder="请输入新邮箱" v-model="Email">
+            </div>
+            <div class="inputText">
+                <strong style="margin:0 8px">电话:</strong><input type="text" placeholder="请输入新电话" v-model="Phone">
+            </div>
+            <div>
+                <button @click="ShowForm" class="formButton" style="background-color:darkorange;color: aliceblue">取消</button>
+            </div>
+            <div>
+                <button @click="Save" class="formButton" style="background-color: darkgreen;color:aliceblue">确认</button>
+            </div>
         </div>
     </div>
 
@@ -59,39 +95,56 @@
         el: '#app',
         data: {
             currentUser: null,
+            Form:false,
+            Name:"",
+            OriginalPassword:"",
+            NewPassword:"",
+            Phone:"",
+            Email:"",
+            Avatar:""
         },
         mounted() {
-            let LoginHttp;
-            if(window.XMLHttpRequest){
-                LoginHttp=new XMLHttpRequest();
-
-            }else{
-                LoginHttp =new ActiveXObject("Microsoft.XMLHTTP");
-            }
-            LoginHttp.open("POST","http://localhost:8080/QGfinalDemo_war/WebsServlet");
-            LoginHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-
-            let requestBody ="&method=loadAccount";
-            LoginHttp.send(requestBody);
-            LoginHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
-                if (event.target.readyState === 4 && event.target.status === 200) {
-
-                    const storedUser=JSON.parse(event.target.responseText);
-
-                    if (storedUser) {
-                        this.currentUser = storedUser.data;
-                        console.log("当前用户：", this.currentUser);
-
-                    } else {
-
-                        console.log("未找到用户数据");
-                    }
-
-
-                }
-            }
+            this.LoadAccount();
         },
         methods:{
+            LoadAccount(){
+                let LoginHttp;
+                if(window.XMLHttpRequest){
+                    LoginHttp=new XMLHttpRequest();
+
+                }else{
+                    LoginHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                LoginHttp.open("POST","http://localhost:8080/QGfinalDemo_war/WebsServlet");
+                LoginHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+                let requestBody ="&method=loadAccount";
+                LoginHttp.send(requestBody);
+                LoginHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+
+                        const storedUser=JSON.parse(event.target.responseText);
+
+                        if (storedUser) {
+                            this.currentUser = storedUser.data;
+                            console.log("当前用户：", this.currentUser);
+
+                        } else {
+
+                            console.log("未找到用户数据");
+                        }
+
+
+                    }
+                }
+            },
+            ShowForm(){
+                this.Form=!this.Form;
+            },
+            Save(){
+                this.ShowForm();
+            },
+
             logout(){
 
             }

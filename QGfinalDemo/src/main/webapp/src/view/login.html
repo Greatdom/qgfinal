@@ -89,7 +89,7 @@
       LoginHttp.open("POST","http://localhost:8080/QGfinalDemo_war/WebsServlet");
       LoginHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 
-      let requestBody ="&method=load";
+      let requestBody ="&method=getRememberCookie";
       LoginHttp.send(requestBody);
       LoginHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
         if (event.target.readyState === 4 && event.target.status === 200) {
@@ -204,10 +204,10 @@
                 this.CurrentUser=this.CurrentUser.data;
                 //登录验证成功后视角色跳转相应页面
                 if(this.CurrentUser.role==="ADMIN"){
-                  localStorage.setItem("currentUser", JSON.stringify(this.CurrentUser));
+                  //localStorage.setItem("currentUser", JSON.stringify(this.CurrentUser));
                   window.location.href = "Manager/ManagerHome.html";
                 }else if(this.CurrentUser.role==="USER"){
-                  localStorage.setItem("currentUser", JSON.stringify(this.CurrentUser));
+                  //localStorage.setItem("currentUser", JSON.stringify(this.CurrentUser));
                   window.location.href = "Front/FrontProduct.html";
                 }else{
                   alert("角色错误");

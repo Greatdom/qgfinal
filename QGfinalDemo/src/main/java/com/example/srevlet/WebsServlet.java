@@ -15,7 +15,36 @@ import java.io.IOException;
 @WebServlet("/WebsServlet")
 public class WebsServlet extends BaseServlet {
 
-    public void load(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+    public void loadAccount(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session=request.getSession();
+        String username=(String) session.getAttribute("username");
+        String role=(String) session.getAttribute("role");
+        Account account=new Account();
+        Result result=null;
+        account.setUsername(username);
+        account.setRole(role);
+
+        if("ADMIN".equals(role)){
+            AdminService adminService=new AdminService();
+            account=adminService.selectSingle(account);System.out.println("1"+account);
+            if(account!=null){
+                result=Result.success(account);
+            }else result=Result.error(ResultCodeEnum.USER_NOT_EXIST_ERROR);
+        }else if("USER".equals(role)){
+            UserService userService=new UserService();
+            account=userService.selectSingle(account);
+            if(account!=null){
+                result=Result.success(account);
+            }else result=Result.error(ResultCodeEnum.USER_NOT_EXIST_ERROR);
+        }else{
+            result=Result.error(ResultCodeEnum.USER_NOT_EXIST_ERROR);
+        }
+        System.out.println("2"+result);
+        String jsonStr=JSON.toJSONString(result);
+        response.getWriter().write(jsonStr);
+    }
+    public void getRememberCookie(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 
         Cookie[] cookies = request.getCookies();

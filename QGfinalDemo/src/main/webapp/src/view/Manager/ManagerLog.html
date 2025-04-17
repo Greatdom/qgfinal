@@ -17,7 +17,7 @@
 
         <h2 style="position: absolute;left:250px;top:14px;color:whitesmoke">后台 > 所有日志信息</h2>
 
-        <button @click="logout"><strong>退出登录</strong></button>
+        <button @click="logout"><strong>{{ currentUser? '退出登录':'进入登录' }}</strong></button>
 
     </div>
 
@@ -46,10 +46,38 @@
     new Vue({
         el: '#app',
         data: {
-
+            currentUser: null,
         },
         mounted() {
+            let LoginHttp;
+            if(window.XMLHttpRequest){
+                LoginHttp=new XMLHttpRequest();
 
+            }else{
+                LoginHttp =new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            LoginHttp.open("POST","http://localhost:8080/QGfinalDemo_war/WebsServlet");
+            LoginHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+            let requestBody ="&method=loadAccount";
+            LoginHttp.send(requestBody);
+            LoginHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                if (event.target.readyState === 4 && event.target.status === 200) {
+
+                    const storedUser=JSON.parse(event.target.responseText);
+
+                    if (storedUser) {
+                        this.currentUser = storedUser.data;
+                        console.log("当前用户：", this.currentUser);
+
+                    } else {
+
+                        console.log("未找到用户数据");
+                    }
+
+
+                }
+            }
         },
         methods:{
             logout(){

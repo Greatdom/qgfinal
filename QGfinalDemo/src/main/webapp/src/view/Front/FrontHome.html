@@ -17,7 +17,7 @@
 
     <h2 style="position: absolute;left:250px;top:14px;color:whitesmoke">前台 > 个人信息</h2>
 
-    <button @click="logout"><strong>退出登录</strong></button>
+    <button @click="logout"><strong>{{ currentUser? '退出登录':'进入登录' }}</strong></button>
 
   </div>
 
@@ -31,7 +31,22 @@
 
   </div>
   <div class="right">
-
+    <strong>欢迎进入前台，{{ currentUser ? currentUser.username : '您尚未登录' }}！</strong>
+    <div style="margin-top:10px;margin-bottom: 10px">
+      <!--            <p>用户名:{{currentUser.username ? currentUser.username : '无用户名'}}</p>-->
+      <!--            <p>密码:{{currentUser.password ? currentUser.password : '无密码'}}</p>-->
+      <p>账号: {{ currentUser?.username || '无账号' }}</p>
+      <p>密码: {{ currentUser?.password || '无密码' }}</p>
+      <p>姓名:{{currentUser?.name||'无姓名'}}</p>
+      <p>电话:{{currentUser?.phone||'无电话'}}</p>
+      <p>邮箱:{{currentUser?.email||'无邮箱'}}</p>
+      <p>ID:{{currentUser?.id||'无ID'}}</p>
+      <p>账号状态:{{currentUser?.status||'无账号状态'}}</p>
+      <p>账号流量: {{ currentUser?.popularity ?? '无流量数据' }}</p>
+      <p>账号信誉: {{ currentUser?.popularity ?? '无信誉数据' }}</p>
+      <p>角色:{{currentUser?.role||'无角色'}}</p>
+      <p></p>
+    </div>
   </div>
 
 
@@ -41,10 +56,38 @@
   new Vue({
     el: '#app',
     data: {
-
+      currentUser: null,
     },
     mounted() {
+      let LoginHttp;
+      if(window.XMLHttpRequest){
+        LoginHttp=new XMLHttpRequest();
 
+      }else{
+        LoginHttp =new ActiveXObject("Microsoft.XMLHTTP");
+      }
+      LoginHttp.open("POST","http://localhost:8080/QGfinalDemo_war/WebsServlet");
+      LoginHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+      let requestBody ="&method=loadAccount";
+      LoginHttp.send(requestBody);
+      LoginHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+        if (event.target.readyState === 4 && event.target.status === 200) {
+
+          const storedUser=JSON.parse(event.target.responseText);
+
+          if (storedUser) {
+            this.currentUser = storedUser.data;
+            console.log("当前用户：", this.currentUser);
+
+          } else {
+
+            console.log("未找到用户数据");
+          }
+
+
+        }
+      }
     },
     methods:{
       logout(){

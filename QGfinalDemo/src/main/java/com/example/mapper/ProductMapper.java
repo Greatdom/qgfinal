@@ -50,6 +50,11 @@ public class ProductMapper {
         String selectSql="select * from product";
         return CRUDUtils.queryForList(Product.class,selectSql);
     }
+    public List<Product> selectByUser(Product product) {
+        Integer userId = product.getUserId();
+        String selectSql="select * from product where user_id = ?";
+        return CRUDUtils.queryForList(Product.class,selectSql,userId);
+    }
     public int update(Product product) {
         if(product==null){
             return 0;

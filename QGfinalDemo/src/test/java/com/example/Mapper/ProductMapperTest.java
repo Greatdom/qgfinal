@@ -55,5 +55,13 @@ public class ProductMapperTest {
         int count = productMapper.update(product);
         System.out.println(product);
     }
+    @Test
+    public void selectByUser() {
+        ProductMapper productMapper = new ProductMapper();
+        Product product=new Product();
+        product.setUserId(1);
+        List<Product> productList = productMapper.selectByUser(product);
+        System.out.println(productList);
+    }
 
 }

@@ -190,7 +190,6 @@ public class WebsServlet extends BaseServlet {
         if (session != null) {
             // 清除会话中的所有属性
             session.invalidate(); // 销毁当前会话
-            System.out.println("Session invalidated. User logged out.");
         } else {
             System.out.println("No active session found. User already logged out.");
         }

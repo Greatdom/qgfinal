@@ -167,3 +167,77 @@
     border:none;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
+
+
+
+
+
+
+.Home .right table{
+    display:block;
+    width:100%;
+    height: 100%;
+    /*overflow: auto;*/
+    /*overflow-x: hidden*/
+}
+
+
+.Home .right tbody {
+    display: block;
+    width: 100%;
+    height: 84%;
+    overflow: auto;
+    overflow-x: hidden;
+}
+
+.Home .right tbody tr:hover{
+    background-color: royalblue;
+}
+.Home .right tbody .NONE:hover{
+    background-color: steelblue;
+}
+
+.Home .right tr {
+    display: flex;
+    justify-content: center; /
+align-items: center;
+    width: 600px;
+    height: 40px;
+    margin: 10px 0;
+    background-color: steelblue;
+}
+.Home .right .RightList tr{
+    width: 215px;
+}
+
+.Home .right td {
+    text-align: center;
+    flex: 1;
+    padding: 8px;
+    border: 1px solid lightblue;
+    overflow:hidden;
+}
+
+.Home .right tbody::-webkit-scrollbar {
+    width: 20px; /* 设置滚动条的宽度 */
+}
+.Home .right tbody::-webkit-scrollbar-track {
+    background: steelblue; /* 轨道背景颜色 */
+}
+.Home .right tbody::-webkit-scrollbar-thumb {
+    background: darkblue; /* 滑块颜色 */
+}
+.Home .right tbody::-webkit-scrollbar-thumb:hover {
+    background: lightblue ; /* 悬停时的颜色 */
+}
+
+.Home .right .RightList{
+    padding-left: 20px;
+    display: inline-block;
+    width:28%;
+    height: 90%;
+
+    background-color: royalblue;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}

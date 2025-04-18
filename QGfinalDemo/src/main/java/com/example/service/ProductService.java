@@ -26,6 +26,9 @@ public class ProductService {
     public List<Product> selectAll() {
         return productMapper.selectAll();
     }
+    public List<Product> selectByUser(Product product) {
+        return productMapper.selectByUser(product);
+    }
     public Product selectById(Product product) {
         return productMapper.selectById(product);
     }

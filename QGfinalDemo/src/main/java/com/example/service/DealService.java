@@ -14,24 +14,37 @@ import java.util.List;
 public class DealService {
     DealMapper dealMapper = new DealMapper();
     public int add(Deal deal) {
-        int count = dealMapper.insert(deal);
-        if (count > 0) {
-            Systeminfo systeminfo = Systeminfo.getInstance();
-            systeminfo.setDealNum(systeminfo.getDealNum()+1);
-            SysteminfoMapper systeminfoMapper = new SysteminfoMapper();
-            systeminfoMapper.update(systeminfo);
-
+        Systeminfo systeminfo = Systeminfo.getInstance();
+        synchronized (systeminfo) {
             ProductMapper productMapper = new ProductMapper();
-            UserMapper userMapper = new UserMapper();
-            Product dbProduct = new Product();
-            dbProduct.setId(deal.getProductId());
-            dbProduct = productMapper.selectById(dbProduct);
-            Account dbaccount = new Account();
-            dbaccount.setId(deal.getUserId());
-            dbaccount = userMapper.selectSingle(dbaccount);
-            count = productMapper.whileDealing(dbProduct,dbaccount);
+            Product product = new Product();
+            product.setId(deal.getProductId());
+            product = productMapper.selectById(product);
+            if(product!=null&&product.getStock()>=deal.getProductNum())
+                product.setStock(product.getStock()-deal.getProductNum());
+            else return 0;
+            int count = 0;
+            if(productMapper.update(product)>0)
+                count = dealMapper.insert(deal);
+            else return count;
+            if (count > 0) {
+
+                systeminfo.setDealNum(systeminfo.getDealNum()+1);
+                SysteminfoMapper systeminfoMapper = new SysteminfoMapper();
+                systeminfoMapper.update(systeminfo);
+
+                UserMapper userMapper = new UserMapper();
+                Product dbProduct = new Product();
+                dbProduct.setId(deal.getProductId());
+                dbProduct = productMapper.selectById(dbProduct);
+                Account dbaccount = new Account();
+                dbaccount.setId(deal.getUserId());
+                dbaccount = userMapper.selectSingle(dbaccount);
+                count = productMapper.whileDealing(dbProduct,dbaccount);
+            }
+            return count;
         }
-        return count;
+
     }
     public List<Deal> selectByUser(int id){
         return dealMapper.selectByUser(id);

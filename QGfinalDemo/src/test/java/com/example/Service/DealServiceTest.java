@@ -14,7 +14,7 @@ public class DealServiceTest {
         deal.setDealTime(TimeUtil.getTime());
         deal.setUserId(1);
         deal.setProductId(1);
-        deal.setProductNum(1);;
+        deal.setProductNum(2);;
         DealService dealService = new DealService();
         int count = dealService.add(deal);
         System.out.println(count);

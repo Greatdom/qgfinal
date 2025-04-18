@@ -43,6 +43,7 @@ public class UserService {
     public int register(Account account) {return add(account);}
 
     public int update(Account account) {
+        Integer id=account.getId();
         Account username = new Account();
         username.setUsername(account.getUsername());
         Account email = new Account();
@@ -52,7 +53,9 @@ public class UserService {
         username = userMapper.selectSingle(username);
         email = userMapper.selectSingle(email);
         phone = userMapper.selectSingle(phone);
-        if(username != null || email != null || phone != null){
+
+        if(id==null||id<=0){return 0;}
+        if((username!=null&& !id.equals(username.getId()))||(email!=null&& !id.equals(email.getId()))||(phone!=null&& !id.equals(phone.getId()))) {
             return 0;
         }else{
             return userMapper.update(account);

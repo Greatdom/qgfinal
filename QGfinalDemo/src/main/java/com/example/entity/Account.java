@@ -119,6 +119,7 @@ public class Account {
         return "Account{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
+                ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
                 ", phone='" + phone + '\'' +
                 ", email='" + email + '\'' +
@@ -127,6 +128,7 @@ public class Account {
                 ", reputation=" + reputation +
                 ", payPassword='" + payPassword + '\'' +
                 ", status='" + status + '\'' +
+                ", popularity=" + popularity +
                 '}';
     }
 

@@ -84,7 +84,19 @@
                 }
             },
             logout(){
+                let LoginHttp;
+                if(window.XMLHttpRequest){
+                    LoginHttp=new XMLHttpRequest();
 
+                }else{
+                    LoginHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                LoginHttp.open("POST","http://localhost:8080/QGfinalDemo_war/WebsServlet");
+                LoginHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+                let requestBody ="&method=logout";
+                LoginHttp.send(requestBody);
+                window.location.href = "../login.html";
             }
         }
     });

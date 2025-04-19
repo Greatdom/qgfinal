@@ -36,7 +36,11 @@ public class ProductService {
         return productMapper.selectList(searchWord,publishStatus);
     }
     public int update(Product product) {
-        return productMapper.update(product);
+        Systeminfo systeminfo = Systeminfo.getInstance();
+        synchronized (systeminfo) {
+            return productMapper.update(product);
+        }
+
     }
 
 }

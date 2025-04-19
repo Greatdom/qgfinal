@@ -120,11 +120,23 @@
     color:black;
     background-color: skyblue;
     border:black solid 2px;
+    /*width: 100px;*/
+    /*height:25px;*/
+    /*border-radius: 4px;*/
 }
 .Home .right .updateButton:hover{
     color:steelblue;
     background-color: #a2b8cf;
     border:aliceblue solid 2px;
+}
+.Home .right .noneUpdateButton{
+    display: block;
+    color:grey;
+    background-color: skyblue;
+    border:gray solid 2px;
+    /*width: 100px;*/
+    /*height:25px;*/
+    /*border-radius: 4px;*/
 }
 
 /*意图只能通过点击关闭按钮关闭表单，故设置无法点击表单外面的内容*/
@@ -134,27 +146,6 @@
     position: absolute;
     z-index: 20;
     background-color: rgba(70, 130, 180, 0.6);
-}
-.Home .updateForm .form{
-    width: 32%;
-    background-color: rgba(255, 255, 255, 0.6);
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius:10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    padding:20px;
-}
-.Home .updateForm .form button{
-    display:block;
-    border:none;
-    background-color: lightgray;
-    margin:10px auto;
-    width:60%;
-    height:40px;
-    font-size:24px;
-    border-radius:6px;
 }
 .Home .form .inputText input{
     display:inline-block;
@@ -236,7 +227,7 @@ align-items: center;
     padding-left: 20px;
     display: inline-block;
     width:28%;
-    height: 90%;
+    height: 70%;
 
     background-color: royalblue;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);

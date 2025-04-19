@@ -31,15 +31,45 @@
 
 
     <div class="right">
+        <div class="HeaderList"
+             style="display: flex;justify-content: space-between;height:15%;width:98%;background-color: cornflowerblue">
+            <div>
+                <p>正在焦点的商品：{{FocusProduct? FocusProduct.id:"无焦点"}}</p>
+                <p>正在焦点的订单：{{FocusDeal? FocusDeal.id:"无焦点"}}</p>
+            </div>
+            <div>
+                <strong v-show="FocusProduct">查看和修改商品信息</strong><br>
+                <button v-show="FocusProduct" class="updateButton" @click="ShowUpdateProductForm"><strong>商品信息</strong></button>
+                <strong v-show="!FocusProduct">没有焦点无法查看修改商品</strong><br>
+                <button v-show="!FocusProduct" class="noneUpdateButton">商品信息</button>
+            </div>
+            <div>
+                <strong v-show="FocusDeal">查看订单和评论</strong><br>
+                <button v-show="FocusDeal" class="updateButton" @click="ShowUpdateDealForm"><strong>订单信息</strong></button>
+                <strong v-show="!FocusDeal">没有焦点无法查看订单和评论</strong><br>
+                <button v-show="!FocusDeal" class="noneUpdateButton">订单信息</button>
+            </div>
+            <div>
+                <strong v-show="currentUser&&currentUser.role==='USER'">新增商品</strong><br>
+                <button v-show="currentUser&&currentUser.role==='USER'" class="updateButton" @click="ShowAddProductForm"><strong>新增</strong></button>
+<!--                <button  class="updateButton" @click="ShowAddProductForm"><strong>新增</strong></button>-->
+                <strong v-show="!currentUser||currentUser.role!=='USER'">未登录用户新增商品</strong><br>
+                <button v-show="!currentUser||currentUser.role!=='USER'" class="noneUpdateButton">新增商品</button>
+            </div>
 
-        <div class="LeftList" style="display: inline-block;width:70%;height: 100%">
+        </div>
+
+
+
+        <div class="LeftList" style="display: inline-block;width:70%;height: 80%">
             <table>
                 <thead style="display:block;width:100%;height: 10%">
                 <tr style="background-color: cadetblue">
-                    <td><strong>商品名称</strong></td>
-                    <td><strong>库存数量</strong></td>
-                    <td><strong>商品分类</strong></td>
-                    <td><strong>商品状态</strong></td>
+                    <td><strong>ID</strong></td>
+                    <td><strong>名称</strong></td>
+                    <td><strong>数量</strong></td>
+                    <td><strong>分类</strong></td>
+                    <td><strong>状态</strong></td>
                     <td><strong>价格</strong></td>
                     <td><strong>总评分</strong></td>
                     <td><strong>流量</strong></td>
@@ -50,6 +80,7 @@
                     <td><strong>无数据!</strong></td>
                 </tr>
                 <tr v-for="product in ProductTable" :key="product.id" @click="FocusOnProduct(product)">
+                    <td>{{ product?.id||'无ID数据'}}</td>
                     <td>{{ product?.name||'无名称数据'}}</td>
                     <td>{{ product?.stock || '无库存数据' }}</td>
                     <td>{{ product?.category || '无分类数据' }}</td>
@@ -62,25 +93,140 @@
             </table>
         </div>
 
-<!--        <div class="RightList">-->
-<!--            <table>-->
-<!--                <thead style="display:block;width:100%;height: 10%">-->
-<!--                <tr style="background-color: cadetblue">-->
-<!--                    <td><strong>{{ FocusingStudent ? FocusingStudent+"的选课列表:" : '尚未选择学生...' }}</strong></td>-->
-<!--                </tr>-->
-<!--                </thead>-->
-<!--                <tbody>-->
-<!--                <tr v-show="!CoursesOfStudentTable" class="NONE">-->
-<!--                    <td color="black"><strong>{{ FocusingStudent ? "没有选课" : '无选课数据！' }}</strong></td>-->
-<!--                </tr>-->
-<!--                <tr v-for="course in CoursesOfStudentTable" :key="course.id">-->
-<!--                    <td>{{ course?.courseName||'未知课程' }}</td>-->
-<!--                </tr>-->
-<!--                </tbody>-->
-<!--            </table>-->
-<!--        </div>-->
+        <div class="RightList">
+            <table>
+                <thead style="display:block;width:100%;height: 10%">
+                <tr style="background-color: cadetblue">
+                    <td><strong>订单ID</strong></td>
+                    <td><strong>数量</strong></td>
+                    <td><strong>状态</strong></td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-show="!DealTable" class="NONE">
+                    <td color="black"><strong>{{ FocusProduct ? "没有订单" : '无订单数据！' }}</strong></td>
+                </tr>
+                <tr v-for="deal in DealTable" :key="deal.id" @click="FocusOnDeal(deal)">
+                    <td>{{ deal?.id||'无ID' }}</td>
+                    <td>{{ deal?.productNum||'无数量' }}</td>
+                    <td>{{ deal?.dealStatus||'无状态' }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
 
     </div>
+
+<!--    查看订单和评论-->
+    <div v-show="UpdateDealForm" class="HoldForm">
+        <div class="form">
+            <h2 style="display:block;width:100%;text-align:center;padding:10px 0;">查看订单和评论</h2>
+
+            <strong>关于订单</strong>
+            <p>{{FocusDeal?.payMethod || "无付款方法数据"}}</p>
+            <p>{{FocusDeal?.dealStatus || "无订单状态数据"}}</p>
+            <p>{{FocusDeal?.dealTime || "无付款时间数据"}}</p>
+            <p>{{FocusDeal?.userId || "无购买者ID数据"}}</p>
+            <p>{{FocusDeal?.productNum || "无购买数量数据"}}</p>
+            <strong>对该订单的评论</strong>
+            <p>评分:{{CommentTable?.score ?? '无评分数据'}}</p>
+            <p>评论内容:{{CommentTable?.content || '无评论内容'}}</p>
+            <p>评论时间:{{CommentTable?.commentTime || '无评论时间数据'}}</p>
+
+
+            <div>
+                <button @click="ShowUpdateDealForm" class="formButton" style="background-color: darkgreen;color:aliceblue">关闭</button>
+            </div>
+        </div>
+    </div>
+
+<!--    新增商品-->
+    <div v-show="AddProductForm" class="HoldForm">
+        <div class="form">
+            <h2 style="display:block;width:100%;text-align:center;padding:10px 0;">新增商品</h2>
+
+            <div class="inputText">
+                <strong>（未制作上传头像版块）</strong>
+            </div>
+            <div class="inputText">
+                <strong style="margin:0 8px">商品名称:</strong><input v-model="AddName" type="text" placeholder="请输入商品名称">
+            </div>
+            <div class="inputText">
+                <strong style="margin:0 8px">商品描述:</strong><textarea v-model="AddDescription" style="resize: none;" cols="30" rows="3"></textarea>
+            </div>
+            <div class="inputText">
+                <strong style="margin:0 8px">商品价格:</strong>
+                <input type="number" v-model="AddPrice" min="1" max="1000" step="0.01" placeholder="请输入商品价格1~1000元" required>
+            </div>
+            <div class="inputText">
+                <strong style="margin:0 8px">商品库存:</strong>
+                <input type="number" v-model="AddStock" min="1" max="100" step="1" placeholder="请输入商品库存1~100件" required>
+            </div>
+            <div class="inputText">
+                <strong style="margin:0 8px">商品分类:</strong>
+                <select v-model="AddCategory">
+                <option value="玩具">玩具</option>
+                <option value="文具">文具</option>
+                <option value="书籍">书籍</option>
+                </select>
+            </div>
+            <div class="formSelect">
+                <strong>是否延期发布商品:</strong>
+                <label>
+                    <input type="radio" value="YES" v-model="IsPublish">是
+                    <input type="radio" value="NO" v-model="IsPublish">否
+                </label>
+            </div>
+            <div class="inputText" v-if="IsPublish==='NO'">
+                <strong style="margin:0 8px">拟定发布时间:</strong>
+                <input type="datetime-local" v-model="AddDate" :min="minDate" >
+            </div>
+            <div>
+                <button @click="CancelAddProductForm" class="formButton" style="background-color:darkorange;color: aliceblue">取消</button>
+            </div>
+            <div>
+                <button @click="SaveAddProductForm" class="formButton" style="background-color: darkgreen;color:aliceblue">确认</button>
+            </div>
+        </div>
+    </div>
+
+<!--    更新商品-->
+
+    <div v-show="UpdateProductForm" class="HoldForm">
+        <div class="form">
+            <h2 style="display:block;width:100%;text-align:center;padding:10px 0;">更新商品</h2>
+
+            <div class="inputText">
+                <strong>（未制作上传头像版块）</strong>
+            </div>
+            <div class="inputText">
+                <strong style="margin:0 8px">商品描述:</strong><textarea v-model="UpdateDescription" style="resize: none;" cols="30" rows="3"></textarea>
+            </div>
+            <div class="inputText">
+                <strong style="margin:0 8px">商品价格:</strong>
+                <input type="number" v-model="UpdatePrice" min="1" max="1000" step="0.01" placeholder="请输入商品价格1~1000元" required>
+            </div>
+            <div class="inputText">
+                <strong style="margin:0 8px">商品库存:</strong>
+                <input type="number" v-model="UpdateStock" min="1" max="100" step="1" placeholder="请输入商品库存1~100件" required>
+            </div>
+            <div class="inputText">
+                <strong style="margin:0 8px">商品分类:</strong>
+                <select v-model="UpdateCategory">
+                    <option value="玩具">玩具</option>
+                    <option value="文具">文具</option>
+                    <option value="书籍">书籍</option>
+                </select>
+            </div>
+            <div>
+                <button @click="CancelUpdateProductForm" class="formButton" style="background-color:darkorange;color: aliceblue">取消</button>
+            </div>
+            <div>
+                <button @click="SaveUpdateProductForm" class="formButton" style="background-color: darkgreen;color:aliceblue">确认</button>
+            </div>
+        </div>
+    </div>
+
 
 
 </div>
@@ -89,17 +235,53 @@
     new Vue({
         el: '#app',
         data: {
+
+            //新增商品的data
+            AddName:"",
+            AddDescription:"",
+            AddPrice:10,
+            AddStock:10,
+            AddCategory:"玩具",
+            IsPublish:"NO",
+            AddDate:"",
+            minDate:"",
+
+            //更新商品的data
+            UpdateDescription:"",
+            UpdatePrice:null,
+            UpdateStock:null,
+            UpdateCategory:null,
+
+
+            //常规
             currentUser: null,
             ProductTable:null,
             DealTable:null,
             FocusProduct:null,
             FocusDeal:null,
+            CommentTable:null,
+            UpdateProductForm:false,
+            UpdateDealForm:false,
+            AddProductForm:false
         },
         mounted() {
             this.LoadAccount();
+            this.setMinDate();
             //this.ProductTable=[{"id":1, "name":'好人卡', "description":'这是好人卡，为小丑准备的', "price":55.5, "stock":9, "category":'文具', "avatar":'null', "publishTime":'2025-04-16T09:02', "publishStatus":'已发布', "userId":1, "score":4, "popularity":4}];
             },
         methods:{
+            CancelAddProductForm(){
+                this.ShowAddProductForm();
+            },
+            SaveAddProductForm(){
+
+            },
+            CancelUpdateProductForm(){
+                this.ShowUpdateProductForm();
+            },
+            SaveUpdateProductForm(){
+
+            },
 
             LoadAccount(){
                 let LoginHttp;
@@ -158,8 +340,65 @@
                     }
                 }
             },
-            FocusOnProduct(somebody){
+            FocusOnDeal(somebody){
 
+
+                this.FocusDeal=somebody;
+
+                let LoadHttp;
+                if(window.XMLHttpRequest){
+                    LoadHttp=new XMLHttpRequest();
+
+                }else{
+                    LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Front/SelfProduct");
+                LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                let requestBody = "method=FocusOnDeal"
+                    +"&dealId=" + encodeURIComponent(somebody.id);
+                LoadHttp.send(requestBody);
+                LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        let result = JSON.parse(event.target.responseText);
+                        if (result.code === "200") {
+                            this.CommentTable = result.data;
+                            console.log("评论"+this.CommentTable);
+                            if(this.CommentTable.length === 0)
+                                this.CommentTable=null;
+                        } else {
+                            this.CommentTable=null;
+                        }
+                    }
+                }
+
+
+            },
+            FocusOnProduct(somebody){
+                this.FocusProduct=somebody;
+                let LoadHttp;
+                if(window.XMLHttpRequest){
+                    LoadHttp=new XMLHttpRequest();
+
+                }else{
+                    LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Front/SelfProduct");
+                LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                let requestBody = "method=FocusOnProduct"
+                    +"&productId=" + encodeURIComponent(somebody.id);
+                LoadHttp.send(requestBody);
+                LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        let result = JSON.parse(event.target.responseText);
+                        if (result.code === "200") {
+                            this.DealTable = result.data; // 更新 StudentsTable
+                            if(this.DealTable.length === 0)
+                                this.DealTable=null;
+                        } else {
+                            alert("生成数据失败,请重新进入页面");
+                        }
+                    }
+                }
             },
 
             logout(){
@@ -176,7 +415,28 @@
                 let requestBody ="&method=logout";
                 LoginHttp.send(requestBody);
                 window.location.href = "../login.html";
+            },
+            ShowUpdateProductForm(){
+                this.UpdateProductForm=!this.UpdateProductForm;
+            },
+            ShowUpdateDealForm(){
+                this.UpdateDealForm=!this.UpdateDealForm;
+            },
+            ShowAddProductForm(){
+                this.AddProductForm=!this.AddProductForm;
+            },
+
+
+            setMinDate() {
+                const now = new Date();
+                // 加一天
+                now.setDate(now.getDate() + 1);
+
+
+                // 转换为本地日期时间格式（YYYY-MM-DDTHH:MM）
+                this.minDate = now.toISOString().slice(0, 16);
             }
+
         }
     });
 </script>

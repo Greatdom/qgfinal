@@ -14,10 +14,6 @@ public class CommentsMapper {
         String insertSql="insert into comments(score,comment_time,content,deal_id) values(?,?,?,?)";
         return CRUDUtils.insert(insertSql, score, commentTime, content, dealId);
     }
-    public List<Comments> selectByDeal(Integer id) {
-        String selectSql="select * from comments where deal_id=?";
-        return CRUDUtils.queryForList(Comments.class,selectSql,id);
-    }
     public List<Comments> selectAll(){
         String selectSql="select * from comments";
         return CRUDUtils.queryForList(Comments.class,selectSql);

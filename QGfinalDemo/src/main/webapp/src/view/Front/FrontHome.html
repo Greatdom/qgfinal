@@ -47,10 +47,8 @@
     </div>
     <strong v-show="currentUser&&currentUser.role==='USER'">修改个人信息</strong><br>
     <button v-show="currentUser&&currentUser.role==='USER'" class="updateButton" @click="ShowForm"><strong>修改个人信息</strong></button>
-    <strong v-show="!currentUser">未登录用户无法修改个人信息</strong><br>
-    <button v-show="!currentUser"
-            style="color:grey;background-color: skyblue;border:gray solid 2px">
-      修改个人信息</button>
+    <strong v-show="!currentUser||currentUser.role!=='USER'">未登录用户无法修改个人信息</strong><br>
+    <button v-show="!currentUser||currentUser.role!=='USER'" class="noneUpdateButton">修改个人信息</button>
   </div>
 
   <div v-show="Form" class="HoldForm">
@@ -76,7 +74,7 @@
         <strong style="margin:0 8px">新电话:</strong><input type="text" placeholder="请输入新电话(必填)" v-model="Phone">
       </div>
       <div>
-        <button @click="ShowForm" class="formButton" style="background-color:darkorange;color: aliceblue">取消</button>
+        <button @click="Cancel" class="formButton" style="background-color:darkorange;color: aliceblue">取消</button>
       </div>
       <div>
         <button @click="Save" class="formButton" style="background-color: darkgreen;color:aliceblue">确认</button>

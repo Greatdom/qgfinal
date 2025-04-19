@@ -23,7 +23,9 @@ public class CommentsMapperTest {
     @Test
     public void selectByDeal() {
         CommentsMapper commentsMapper = new CommentsMapper();
-        List<Comments> comments = commentsMapper.selectByDeal(1);
+        Comments comment = new Comments();
+        comment.setDealId(1);
+        Comments comments = commentsMapper.selectByDeal(comment);
         System.out.println(comments);
     }
     @Test

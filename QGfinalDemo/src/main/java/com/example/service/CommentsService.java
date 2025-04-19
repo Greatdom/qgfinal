@@ -34,8 +34,10 @@ public class CommentsService {
         }
         return count;
     }
-    public List<Comments> selectByDeal(int id){
-        return commentsMapper.selectByDeal(id);
+    public Comments selectByDeal(int id){
+        Comments comment = new Comments();
+        comment.setDealId(id);
+        return commentsMapper.selectByDeal(comment);
     }
     public List<Comments> selectAll(){
         return commentsMapper.selectAll();

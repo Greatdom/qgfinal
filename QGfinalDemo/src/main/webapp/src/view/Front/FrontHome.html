@@ -245,23 +245,14 @@
                 this.currentUser= JSON.parse(event.target.responseText);
                 console.log(this.currentUser);
                 if(this.currentUser.code==="200"){
-
-
-
-
-
-
-                  //如果成功则直接关闭窗口，失败则调用Cancel方法
                   alert(this.currentUser.msg);
                   this.currentUser=this.currentUser.data;
                   this.ShowForm();
                   this.OriginalPassword="";
                   this.NewPassword="";
-                  return;
                 }else{
                   alert(this.currentUser.msg);
                   this.Cancel();
-                  return;
                 }
 
 

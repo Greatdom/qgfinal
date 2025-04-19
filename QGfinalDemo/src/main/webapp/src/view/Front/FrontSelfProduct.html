@@ -123,11 +123,11 @@
             <h2 style="display:block;width:100%;text-align:center;padding:10px 0;">查看订单和评论</h2>
 
             <strong>关于订单</strong>
-            <p>{{FocusDeal?.payMethod || "无付款方法数据"}}</p>
-            <p>{{FocusDeal?.dealStatus || "无订单状态数据"}}</p>
-            <p>{{FocusDeal?.dealTime || "无付款时间数据"}}</p>
-            <p>{{FocusDeal?.userId || "无购买者ID数据"}}</p>
-            <p>{{FocusDeal?.productNum || "无购买数量数据"}}</p>
+            <p>付款方式:{{FocusDeal?.payMethod || "无付款方法数据"}}</p>
+            <p>订单状态:{{FocusDeal?.dealStatus || "无订单状态数据"}}</p>
+            <p>付款时间:{{FocusDeal?.dealTime || "无付款时间数据"}}</p>
+            <p>购买者ID:{{FocusDeal?.userId || "无购买者ID数据"}}</p>
+            <p>购买数量:{{FocusDeal?.productNum || "无购买数量数据"}}</p>
             <strong>对该订单的评论</strong>
             <p>评分:{{CommentTable?.score ?? '无评分数据'}}</p>
             <p>评论内容:{{CommentTable?.content || '无评论内容'}}</p>
@@ -177,7 +177,7 @@
                     <input type="radio" value="NO" v-model="IsPublish">否
                 </label>
             </div>
-            <div class="inputText" v-if="IsPublish==='NO'">
+            <div class="inputText" v-if="IsPublish==='YES'">
                 <strong style="margin:0 8px">拟定发布时间:</strong>
                 <input type="datetime-local" v-model="AddDate" :min="minDate" >
             </div>
@@ -242,6 +242,7 @@
             AddPrice:10,
             AddStock:10,
             AddCategory:"玩具",
+            AddAvatar:"",
             IsPublish:"NO",
             AddDate:"",
             minDate:"",
@@ -251,6 +252,7 @@
             UpdatePrice:null,
             UpdateStock:null,
             UpdateCategory:null,
+            UpdateAvatar:null,
 
 
             //常规
@@ -272,14 +274,132 @@
         methods:{
             CancelAddProductForm(){
                 this.ShowAddProductForm();
+                this.AddName="";
+                this.AddDescription="";
+                this.AddPrice=10;
+                this.AddStock=10;
+                this.AddCategory="玩具";
+                this.IsPublish="NO";
+                this.AddDate="";
+                this.AddAvatar="";
+                this.minDate="";
+
             },
             SaveAddProductForm(){
+                const descriptionRegex = /^[^\s]{1,100}$/;
+                const nameRegex = /^[^\s]{2,10}$/;
+                const priceRegex = /^(1000(\.00?)?|[1-9]?[0-9]?[0-9](\.[0-9]{1,2})?)$/;
+                const stockRegex = /^(100|[1-9]?[0-9])$/;
+                this.AddName=this.AddName.trim();
+                this.AddDescription=this.AddDescription.trim();
+                if(this.AddName==null||this.AddDescription==null||this.AddName===""||this.AddDescription===""){
+                    alert("请填满必填信息");
+                    this.CancelAddProductForm();
+                    return;
+                }else if(!nameRegex.test(this.AddName)||!descriptionRegex.test(this.AddDescription)||!priceRegex.test(this.AddPrice)||!stockRegex.test(this.AddStock)){
+                    alert("填入信息不符合规范");
+                    this.CancelAddProductForm();
+                    return;
+                }
 
+                let requestBody;
+
+                requestBody = "name=" + encodeURIComponent(this.AddName)
+                    + "&description=" + encodeURIComponent(this.AddDescription)
+                    + "&price=" + encodeURIComponent(this.AddPrice)
+                    + "&stock=" + encodeURIComponent(this.AddStock)
+                    + "&category=" + encodeURIComponent(this.AddCategory)
+                    + "&isPublish=" + encodeURIComponent(this.IsPublish)
+                    + "&publishTime=" + encodeURIComponent(this.AddDate)
+                    + "&userId=" + encodeURIComponent(this.currentUser.id)
+                    + "&avatar=" + encodeURIComponent(this.AddAvatar)
+                    + "&method=SaveAddProductForm";
+
+
+                let UpdateHttp;
+                if(window.XMLHttpRequest){
+                    UpdateHttp=new XMLHttpRequest();
+                }else{
+                    UpdateHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                UpdateHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Front/SelfProduct");
+                UpdateHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                UpdateHttp.send(requestBody);
+                UpdateHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        let result = JSON.parse(event.target.responseText);
+                        if(result.code==="200"){
+                            this.LoadProduct();
+                            alert(result.msg);
+                        }else{
+                            alert(result.msg);
+                        }
+                        this.CancelAddProductForm();
+                    }
+                }
             },
             CancelUpdateProductForm(){
                 this.ShowUpdateProductForm();
+                this.UpdateDescription=this.FocusProduct?.description||"";
+                this.UpdatePrice=this.FocusProduct?.price||1;
+                this.UpdateStock=this.FocusProduct?.stock||1;
+                this.UpdateCategory=this.FocusProduct?.category||"文具";
+                this.UpdateAvatar=this.FocusProduct?.avatar||"";
             },
             SaveUpdateProductForm(){
+                const descriptionRegex = /^[^\s]{1,100}$/;
+                const priceRegex = /^(1000(\.00?)?|[1-9]?[0-9]?[0-9](\.[0-9]{1,2})?)$/;
+                const stockRegex = /^(100|[1-9]?[0-9])$/;
+
+
+                this.UpdateDescription=this.UpdateDescription.trim();
+                if(this.UpdateDescription==null||this.UpdateDescription===""){
+                    alert("请填满必填信息");
+                    this.CancelUpdateProductForm();
+                    return;
+                }else if(!descriptionRegex.test(this.UpdateDescription)||!priceRegex.test(this.UpdatePrice)||!stockRegex.test(this.UpdateStock)){
+                    alert("填入信息不符合规范");
+                    this.CancelUpdateProductForm();
+                    return;
+                }
+
+
+
+                let requestBody;
+
+                requestBody = "description=" + encodeURIComponent(this.UpdateDescription)
+                    + "&price=" + encodeURIComponent(this.UpdatePrice)
+                    + "&stock=" + encodeURIComponent(this.UpdateStock)
+                    + "&category=" + encodeURIComponent(this.UpdateCategory)
+                    + "&avatar=" + encodeURIComponent(this.UpdateAvatar)
+                    + "&id=" + encodeURIComponent(this.FocusProduct.id)
+                    + "&method=SaveUpdateProductForm";
+
+
+                let UpdateHttp;
+                if(window.XMLHttpRequest){
+                    UpdateHttp=new XMLHttpRequest();
+                }else{
+                    UpdateHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                UpdateHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Front/SelfProduct");
+                UpdateHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                UpdateHttp.send(requestBody);
+                UpdateHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        let result = JSON.parse(event.target.responseText);
+                        if(result.code==="200"){
+                            this.LoadProduct();
+                            alert(result.msg);
+                        }else{
+                            alert(result.msg);
+                        }
+                        this.CancelUpdateProductForm();
+                    }
+                }
+
+
+
 
             },
 
@@ -333,7 +453,6 @@
                         let result = JSON.parse(event.target.responseText);
                         if (result.code === "200") {
                             this.ProductTable = result.data;
-                            console.log(this.ProductTable);
                         } else {
                             alert(result.msg);
                         }
@@ -394,8 +513,16 @@
                             this.DealTable = result.data; // 更新 StudentsTable
                             if(this.DealTable.length === 0)
                                 this.DealTable=null;
+
+
+                            this.UpdateDescription=this.FocusProduct?.description||"";
+                            this.UpdatePrice=this.FocusProduct?.price||1;
+                            this.UpdateStock=this.FocusProduct?.stock||1;
+                            this.UpdateCategory=this.FocusProduct?.category||"文具";
+                            this.UpdateAvatar=this.FocusProduct?.avatar||"";
+
                         } else {
-                            alert("生成数据失败,请重新进入页面");
+                            this.DealTable=null;
                         }
                     }
                 }

@@ -2,14 +2,15 @@ package com.example.srevlet.Front;
 
 import com.alibaba.fastjson.JSON;
 import com.example.common.Result;
+import com.example.common.enums.ProductStatusEnum;
 import com.example.common.enums.ResultCodeEnum;
+import com.example.entity.Account;
 import com.example.entity.Comments;
 import com.example.entity.Deal;
 import com.example.entity.Product;
-import com.example.service.CommentsService;
-import com.example.service.DealService;
-import com.example.service.ProductService;
+import com.example.service.*;
 import com.example.srevlet.BaseServlet;
+import com.example.util.TimeUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -21,24 +22,84 @@ import java.util.List;
 
 @WebServlet("/Front/SelfProduct")
 public class FrontSelfProductServlet extends BaseServlet {
+
+
+
+    public void SaveAddProductForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String name = request.getParameter("name");
+        String description = request.getParameter("description");
+        Double price=Double.parseDouble(request.getParameter("price"));
+        Integer stock=Integer.parseInt(request.getParameter("stock"));
+        String category=request.getParameter("category");
+        String isPublish=request.getParameter("isPublish");
+        String publishTime=request.getParameter("publishTime");
+        Integer userId=Integer.parseInt(request.getParameter("userId"));
+        String avatar=request.getParameter("avatar");
+        Product product=new Product();
+        product.setName(name);
+        product.setDescription(description);
+        product.setPrice(price);
+        product.setStock(stock);
+        product.setCategory(category);
+        if("NO".equals(isPublish)){
+            product.setPublishTime(TimeUtil.getTime());
+            product.setPublishStatus(ProductStatusEnum.PUBLISHED.getValue());
+        }else if("YES".equals(isPublish)){
+            product.setPublishTime(publishTime);
+            product.setPublishStatus(ProductStatusEnum.NOT_PUBLISHED.getValue());
+        }
+        product.setUserId(userId);
+        product.setAvatar(avatar);
+        Result result=null;
+        ProductService productService=new ProductService();
+        if(productService.add(product)>0){
+            result=Result.success();
+        }else{
+            result=Result.error();
+        }
+        String jsonStr=JSON.toJSONString(result);
+        response.getWriter().write(jsonStr);
+    }
+
+    public void SaveUpdateProductForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Integer id=Integer.parseInt(request.getParameter("id"));
+        ProductService productService=new ProductService();
+        Product product = new Product();
+        product.setId(id);
+        product=productService.selectById(product);
+        String description=request.getParameter("description");
+        Double price=Double.parseDouble(request.getParameter("price"));
+        Integer stock=Integer.parseInt(request.getParameter("stock"));
+        String category=request.getParameter("category");
+        String avatar=request.getParameter("avatar");
+        product.setDescription(description);
+        product.setPrice(price);
+        product.setStock(stock);
+        product.setCategory(category);
+        product.setAvatar(avatar);
+        Result result = null;
+        if(productService.update(product)>0){
+            result=Result.success();
+        }else{
+            result=Result.error();
+        }
+        String jsonStr=JSON.toJSONString(result);
+        response.getWriter().write(jsonStr);
+    }
+
+
+
+
     public void FocusOnDeal (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-
-
-
         Integer dealId = Integer.valueOf(request.getParameter("dealId"));
         CommentsService commentsService = new CommentsService();
         Result result=null;
-        System.out.println("1"+dealId);
         Comments comment =commentsService.selectByDeal(dealId);
-        System.out.println("2"+comment);
         if(comment!=null)
             result=Result.success(comment);
         else result=Result.error(ResultCodeEnum.USER_NOT_EXIST_ERROR);
         String jsonStr= JSON.toJSONString(result);
         response.getWriter().write(jsonStr);
-
-
-
     }
 
     public void FocusOnProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{

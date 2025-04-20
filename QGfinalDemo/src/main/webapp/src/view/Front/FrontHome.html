@@ -62,7 +62,10 @@
         <strong style="margin:0 8px">旧密码:</strong><input type="password" placeholder="请输入旧密码以校验身份" v-model="OriginalPassword">
       </div>
       <div class="inputText">
-        <strong style="margin:0 8px">新密码:</strong><input type="password" placeholder="请输入新密码(选填)" v-model="NewPassword">
+        <strong style="margin:0 8px">新登录密码:</strong><input type="password" placeholder="请输入新密码(选填)" v-model="NewPassword">
+      </div>
+      <div class="inputText">
+        <strong style="margin:0 8px">新支付密码:</strong><input type="password" placeholder="请输入新支付密码(必填)" v-model="PayPassword">
       </div>
       <div class="inputText">
         <strong style="margin:0 8px">新昵称:</strong><input type="text" placeholder="请输入新昵称(必填)" v-model="Name">
@@ -95,7 +98,8 @@
       NewPassword:"",
       Phone:"",
       Email:"",
-      Avatar:""
+      Avatar:"",
+      PayPassword:""
     },
     mounted() {
       this.LoadAccount();
@@ -128,6 +132,7 @@
               this.Avatar=this.currentUser?.avatar||"";
               this.OriginalPassword="";
               this.NewPassword="";
+              this.PayPassword="";
             } else {
 
               console.log("未找到用户数据");
@@ -163,6 +168,7 @@
         this.Avatar=this.currentUser?.avatar||"";
         this.OriginalPassword="";
         this.NewPassword="";
+        this.PayPassword="";
       },
       Save(){
         //记得长传头像
@@ -171,6 +177,7 @@
         this.Name=this.Name.trim();
         this.Email=this.Email.trim();
         this.Phone=this.Phone.trim();
+        this.PayPassword=this.PayPassword.trim();
         const nameRegex = /^[^\s]{2,10}$/;
         const passwordRegex = /^[a-zA-Z0-9_]{4,20}$/;
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -179,7 +186,7 @@
         if(this.currentUser==null||this.OriginalPassword!==this.currentUser.password){
           alert("请输入正确的原密码以校验身份");
           this.Cancel();
-        }else if(this.Name===""||this.Email===""||this.Phone===""||this.Name==null||this.Email==null||this.Phone==null){
+        }else if(this.PayPassword===""||this.PayPassword==null||this.Name===""||this.Email===""||this.Phone===""||this.Name==null||this.Email==null||this.Phone==null){
           alert("请填入必填信息");
           this.Cancel();
         }else{
@@ -190,6 +197,10 @@
           }else
           if (!emailRegex.test(this.Email)) {
             alert("新邮箱格式不正确");
+            this.Cancel();
+          }else
+          if (!passwordRegex.test(this.PayPassword)) {
+            alert("新支付密码格式不正确");
             this.Cancel();
           }else
           if (!phoneRegex.test(this.Phone)) {
@@ -213,6 +224,7 @@
                       + "&role=" + encodeURIComponent(this.currentUser.role)
                       + "&username=" + encodeURIComponent(this.currentUser.username)
                       + "&avatar=" + encodeURIComponent(this.Avatar)
+                      + "&payPassword=" + encodeURIComponent(this.PayPassword)
                       + "&method=updateAccount";
             }else{
               requestBody = "phone=" + encodeURIComponent(this.Phone)
@@ -222,6 +234,7 @@
                       + "&username=" + encodeURIComponent(this.currentUser.username)
                       + "&avatar=" + encodeURIComponent(this.Avatar)
                       + "&name=" + encodeURIComponent(this.Name)
+                      + "&payPassword=" + encodeURIComponent(this.PayPassword)
                       + "&method=updateAccount";
             }
 
@@ -250,6 +263,7 @@
                   this.ShowForm();
                   this.OriginalPassword="";
                   this.NewPassword="";
+                  this.PayPassword="";
                 }else{
                   alert(this.currentUser.msg);
                   this.Cancel();

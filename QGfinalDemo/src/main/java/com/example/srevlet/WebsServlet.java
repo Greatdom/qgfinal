@@ -23,6 +23,7 @@ public class WebsServlet extends BaseServlet {
         String phone=request.getParameter("phone");
         String avatar=request.getParameter("avatar");
         String role=request.getParameter("role");
+        String payPassword=request.getParameter("payPassword");
         //avatar
         Account account=new Account();
         account.setUsername(username);
@@ -51,8 +52,9 @@ public class WebsServlet extends BaseServlet {
                 account.setEmail(email);
                 account.setPhone(phone);
                 account.setAvatar(avatar);
+                account.setPayPassword(payPassword);
                 if(userService.update(account)>0) result = Result.success(account);
-                else result=Result.error(ResultCodeEnum.USER_NOT_EXIST_ERROR);
+                else result=Result.error(ResultCodeEnum.PARAM_EXIST_ERROR);
             }else{
                 result=Result.error(ResultCodeEnum.USER_NOT_EXIST_ERROR);
             }

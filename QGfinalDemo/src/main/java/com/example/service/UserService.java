@@ -58,7 +58,7 @@ public class UserService {
         if((username!=null&& !id.equals(username.getId()))||(email!=null&& !id.equals(email.getId()))||(phone!=null&& !id.equals(phone.getId()))) {
             return 0;
         }else{
-            return userMapper.update(account);
+             return userMapper.update(account);
         }
     }
 

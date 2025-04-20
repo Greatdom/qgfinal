@@ -436,12 +436,7 @@
                             this.currentUser = storedUser.data;
                             console.log("用户：", this.currentUser);
                             this.LoadProduct();
-                        } else {
-
-                            console.log("未找到用户数据");
                         }
-
-
                     }
                 }
             },
@@ -464,8 +459,6 @@
                         let result = JSON.parse(event.target.responseText);
                         if (result.code === "200") {
                             this.ProductTable = result.data;
-                        } else {
-                            alert(result.msg);
                         }
                     }
                 }

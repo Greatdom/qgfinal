@@ -67,10 +67,10 @@
                 <tr style="background-color: cadetblue">
                     <td><strong>ID</strong></td>
                     <td><strong>名称</strong></td>
-                    <td><strong>数量</strong></td>
                     <td><strong>分类</strong></td>
                     <td><strong>介绍</strong></td>
                     <td><strong>价格</strong></td>
+                    <td><strong>库存</strong></td>
                     <td><strong>总评分</strong></td>
                     <td><strong>流量</strong></td>
                 </tr>
@@ -82,10 +82,10 @@
                 <tr v-for="product in ProductTable" :key="product.id" @click="FocusOnProduct(product)">
                     <td>{{ product?.id||'无ID数据'}}</td>
                     <td>{{ product?.name||'无名称数据'}}</td>
-                    <td>{{ product?.stock || '无库存数据' }}</td>
                     <td>{{ product?.category || '无分类数据' }}</td>
                     <td>{{ product?.description || '无商品介绍数据' }}</td>
                     <td>{{ product?.price ?? '无价格数据' }}</td>
+                    <td>{{ product?.stock ?? '无库存数据' }}</td>
                     <td>{{ product?.score ?? '无总评分数据' }}</td>
                     <td>{{ product?.popularity ?? '无流量数据' }}</td>
                 </tr>
@@ -164,7 +164,7 @@
                 </select>
             </div>
             <div class="inputText">
-                <strong style="margin:0 8px">付款密码:</strong><input v-model="PayPassword" type="password" placeholder="请输入付款密码">
+                <strong style="margin:0 8px">付款密码:</strong><input v-model="PayPassword" type="password">
             </div>
             <div>
                 <button @click="CancelBuyForm" class="formButton" style="background-color:darkorange;color: aliceblue">取消</button>
@@ -207,9 +207,49 @@
         methods:{
             CancelBuyForm(){
                 this.ShowBuyForm();
+                this.PayNum=1;
+                this.PayMethod="即买即付";
+                this.PayPassword="";
             },
             SaveBuyForm(){
-                this.ShowBuyForm();
+                const numRegex = /^(10|[1-9])$/;
+                this.PayPassword=this.PayPassword.trim();
+                if(this.currentUser==null||this.PayPassword!==this.currentUser.payPassword){
+                    alert("付款密码错误!");
+                    this.CancelBuyForm();
+                    return;
+                }else if(!numRegex.test(this.PayNum)){
+                    alert("请输入合适的购买数量");
+                    this.CancelBuyForm();
+                    return;
+                }
+                let requestBody;
+                requestBody = "payMethod=" + encodeURIComponent(this.PayMethod)
+                    + "&productNum=" + encodeURIComponent(this.PayNum)
+                    + "&userId=" + encodeURIComponent(this.currentUser.id)
+                    + "&productId=" + encodeURIComponent(this.FocusProduct.id)
+                    + "&method=SaveBuyForm";
+                let UpdateHttp;
+                if(window.XMLHttpRequest){
+                    UpdateHttp=new XMLHttpRequest();
+                }else{
+                    UpdateHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                UpdateHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Front/Product");
+                UpdateHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                UpdateHttp.send(requestBody);
+                UpdateHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        let result = JSON.parse(event.target.responseText);
+                        alert(result.msg);
+                        this.LoadProduct();
+                        this.CancelBuyForm();
+                        this.DealTable=null;
+                        this.FocusProduct=null;
+                        this.FocusDeal=null;
+                        this.CommentTable=null;
+                    }
+                }
             },
             LoadAccount(){
                 let LoginHttp;
@@ -285,8 +325,6 @@
                         let result = JSON.parse(event.target.responseText);
                         if (result.code === "200") {
                             this.ProductTable = result.data;
-                        } else {
-                            alert(result.msg);
                         }
                     }
                 }

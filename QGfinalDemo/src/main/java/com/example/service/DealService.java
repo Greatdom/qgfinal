@@ -28,11 +28,10 @@ public class DealService {
                 count = dealMapper.insert(deal);
             else return count;
             if (count > 0) {
-
                 systeminfo.setDealNum(systeminfo.getDealNum()+1);
+                systeminfo.setTotalMoney(systeminfo.getTotalMoney()+(deal.getProductNum()*product.getPrice())/10000.0);
                 SysteminfoMapper systeminfoMapper = new SysteminfoMapper();
                 systeminfoMapper.update(systeminfo);
-
                 UserMapper userMapper = new UserMapper();
                 Product dbProduct = new Product();
                 dbProduct.setId(deal.getProductId());

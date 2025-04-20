@@ -391,10 +391,17 @@
                         if(result.code==="200"){
                             this.LoadProduct();
                             alert(result.msg);
+                            this.FocusProduct.description=this.UpdateDescription;
+                            this.FocusProduct.price=this.UpdatePrice;
+                            this.FocusProduct.stock=this.UpdateStock;
+                            this.FocusProduct.category=this.UpdateCategory;
+                            this.FocusProduct.avatar=this.UpdateAvatar;
+                            this.ShowUpdateProductForm();
                         }else{
                             alert(result.msg);
+                            this.CancelUpdateProductForm();
                         }
-                        this.CancelUpdateProductForm();
+
                     }
                 }
 
@@ -510,20 +517,17 @@
                     if (event.target.readyState === 4 && event.target.status === 200) {
                         let result = JSON.parse(event.target.responseText);
                         if (result.code === "200") {
-                            this.DealTable = result.data; // 更新 StudentsTable
+                            this.DealTable = result.data;
                             if(this.DealTable.length === 0)
                                 this.DealTable=null;
-
-
-                            this.UpdateDescription=this.FocusProduct?.description||"";
-                            this.UpdatePrice=this.FocusProduct?.price||1;
-                            this.UpdateStock=this.FocusProduct?.stock||1;
-                            this.UpdateCategory=this.FocusProduct?.category||"文具";
-                            this.UpdateAvatar=this.FocusProduct?.avatar||"";
-
                         } else {
                             this.DealTable=null;
                         }
+                        this.UpdateDescription=this.FocusProduct?.description||"";
+                        this.UpdatePrice=this.FocusProduct?.price||1;
+                        this.UpdateStock=this.FocusProduct?.stock||1;
+                        this.UpdateCategory=this.FocusProduct?.category||"文具";
+                        this.UpdateAvatar=this.FocusProduct?.avatar||"";
                     }
                 }
             },

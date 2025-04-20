@@ -226,6 +226,7 @@
                 let requestBody;
                 requestBody = "payMethod=" + encodeURIComponent(this.PayMethod)
                     + "&productNum=" + encodeURIComponent(this.PayNum)
+                    + "&username=" + encodeURIComponent(this.currentUser.username)
                     + "&userId=" + encodeURIComponent(this.currentUser.id)
                     + "&productId=" + encodeURIComponent(this.FocusProduct.id)
                     + "&method=SaveBuyForm";

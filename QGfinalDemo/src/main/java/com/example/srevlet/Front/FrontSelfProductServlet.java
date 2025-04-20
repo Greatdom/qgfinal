@@ -2,6 +2,7 @@ package com.example.srevlet.Front;
 
 import com.alibaba.fastjson.JSON;
 import com.example.common.Result;
+import com.example.common.enums.LogsTypeEnum;
 import com.example.common.enums.ProductStatusEnum;
 import com.example.common.enums.ResultCodeEnum;
 import com.example.entity.Account;
@@ -26,6 +27,7 @@ public class FrontSelfProductServlet extends BaseServlet {
 
 
     public void SaveAddProductForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String username=request.getParameter("username");
         String name = request.getParameter("name");
         String description = request.getParameter("description");
         Double price=Double.parseDouble(request.getParameter("price"));
@@ -57,11 +59,18 @@ public class FrontSelfProductServlet extends BaseServlet {
         }else{
             result=Result.error();
         }
+
+        if("200".equals(result.getCode())){
+            LogService logService=new LogService();
+            logService.recordLog(username, LogsTypeEnum.PUBLISH_PRODUCT.getValue(),"发布商品成功",request);
+        }
+
         String jsonStr=JSON.toJSONString(result);
         response.getWriter().write(jsonStr);
     }
 
     public void SaveUpdateProductForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String username=request.getParameter("username");
         Integer id=Integer.parseInt(request.getParameter("id"));
         ProductService productService=new ProductService();
         Product product = new Product();
@@ -83,6 +92,11 @@ public class FrontSelfProductServlet extends BaseServlet {
         }else{
             result=Result.error();
         }
+        if("200".equals(result.getCode())){
+            LogService logService=new LogService();
+            logService.recordLog(username, LogsTypeEnum.UPDATE_PRODUCT.getValue(),"更新商品成功",request);
+        }
+
         String jsonStr=JSON.toJSONString(result);
         response.getWriter().write(jsonStr);
     }

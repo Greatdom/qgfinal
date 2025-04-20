@@ -3,6 +3,7 @@ package com.example.srevlet.Front;
 import com.alibaba.fastjson.JSON;
 import com.example.common.Result;
 import com.example.common.enums.DealStatusEnum;
+import com.example.common.enums.LogsTypeEnum;
 import com.example.common.enums.ProductStatusEnum;
 import com.example.common.enums.ResultCodeEnum;
 import com.example.entity.Comments;
@@ -10,6 +11,7 @@ import com.example.entity.Deal;
 import com.example.entity.Product;
 import com.example.service.CommentsService;
 import com.example.service.DealService;
+import com.example.service.LogService;
 import com.example.service.ProductService;
 import com.example.srevlet.BaseServlet;
 import com.example.util.TimeUtil;
@@ -25,6 +27,7 @@ import java.util.List;
 public class FrontProductServlet extends BaseServlet {
 
     public void SaveBuyForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        String username=request.getParameter("username");
         String payMethod=request.getParameter("payMethod");
         Integer productNum=Integer.valueOf(request.getParameter("productNum"));
         Integer productId=Integer.valueOf(request.getParameter("productId"));
@@ -43,6 +46,12 @@ public class FrontProductServlet extends BaseServlet {
         }else{
             result=Result.error(ResultCodeEnum.PRODUCT_BUY_ERROR);
         }
+
+        if("200".equals(result.getCode())){
+            LogService logService=new LogService();
+            logService.recordLog(username, LogsTypeEnum.DEAL.getValue(),"购买商品成功",request);
+        }
+
         String jsonStr= JSON.toJSONString(result);
         response.getWriter().write(jsonStr);
     }

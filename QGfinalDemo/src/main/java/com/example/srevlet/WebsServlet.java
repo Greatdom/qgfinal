@@ -2,11 +2,15 @@ package com.example.srevlet;
 
 import com.alibaba.fastjson.JSON;
 import com.example.common.Result;
+import com.example.common.enums.LogsTypeEnum;
 import com.example.common.enums.ResultCodeEnum;
 import com.example.entity.Account;
+import com.example.entity.Log;
 import com.example.entity.Systeminfo;
 import com.example.service.AdminService;
+import com.example.service.LogService;
 import com.example.service.UserService;
+import com.example.util.IpUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -75,6 +79,12 @@ public class WebsServlet extends BaseServlet {
         }else{
             result=Result.error(ResultCodeEnum.USER_NOT_EXIST_ERROR);
         }
+
+        if("200".equals(result.getCode())){
+            LogService logService=new LogService();
+            logService.recordLog(username,LogsTypeEnum.UPDATE_ACCOUNT.getValue(),"更新账户成功",request);
+        }
+
         String jsonStr=JSON.toJSONString(result);
         response.getWriter().write(jsonStr);
     }
@@ -191,6 +201,9 @@ public class WebsServlet extends BaseServlet {
         }
 
         if("200".equals(result.getCode())){
+
+            LogService logService=new LogService();
+            logService.recordLog(username,LogsTypeEnum.LOGIN.getValue(),"登录成功",request);
             HttpSession session=request.getSession();
             session.setAttribute("username",username);
             session.setAttribute("role",role);
@@ -242,6 +255,11 @@ public class WebsServlet extends BaseServlet {
                 result=Result.error();
             }
     //    }
+
+        if("200".equals(result.getCode())){
+            LogService logService=new LogService();
+            logService.recordLog(username,LogsTypeEnum.REGISTER.getValue(),"注册成功",request);
+        }
 
         String jsonStr= JSON.toJSONString(result);
 

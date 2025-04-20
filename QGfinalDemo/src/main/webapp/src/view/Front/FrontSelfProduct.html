@@ -311,6 +311,7 @@
                 requestBody = "name=" + encodeURIComponent(this.AddName)
                     + "&description=" + encodeURIComponent(this.AddDescription)
                     + "&price=" + encodeURIComponent(this.AddPrice)
+                    + "&username=" + encodeURIComponent(this.currentUser.username)
                     + "&stock=" + encodeURIComponent(this.AddStock)
                     + "&category=" + encodeURIComponent(this.AddCategory)
                     + "&isPublish=" + encodeURIComponent(this.IsPublish)
@@ -372,6 +373,7 @@
                 let requestBody;
 
                 requestBody = "description=" + encodeURIComponent(this.UpdateDescription)
+                    + "&username=" + encodeURIComponent(this.currentUser.username)
                     + "&price=" + encodeURIComponent(this.UpdatePrice)
                     + "&stock=" + encodeURIComponent(this.UpdateStock)
                     + "&category=" + encodeURIComponent(this.UpdateCategory)

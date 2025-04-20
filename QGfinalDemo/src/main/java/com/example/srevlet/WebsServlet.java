@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.example.common.Result;
 import com.example.common.enums.ResultCodeEnum;
 import com.example.entity.Account;
+import com.example.entity.Systeminfo;
 import com.example.service.AdminService;
 import com.example.service.UserService;
 
@@ -14,6 +15,19 @@ import java.io.IOException;
 
 @WebServlet("/WebsServlet")
 public class WebsServlet extends BaseServlet {
+
+    public void LoadSystem(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Result result=null;
+        Systeminfo systeminfo =Systeminfo.getInstance();
+        if(systeminfo!=null){
+            result=Result.success(systeminfo);
+        }else{
+            result=Result.error(ResultCodeEnum.SYSTEM_ERROR);
+        }
+        String jsonStr=JSON.toJSONString(result);
+        response.getWriter().write(jsonStr);
+    }
+
 
     public void updateAccount(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username=request.getParameter("username");

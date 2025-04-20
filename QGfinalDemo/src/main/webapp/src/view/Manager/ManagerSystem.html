@@ -31,6 +31,21 @@
     </div>
     <div class="right">
 
+        <h3>系统数据:</h3>
+        <strong style="color:red" v-if="currentUser&&currentUser.role!=='ADMIN'">你不是管理者!你没有操控后台的权限</strong>
+        <div style="margin-top:10px;margin-bottom: 10px">
+            <p><strong>管理员数量:</strong> {{ SystemInfo?.adminNum ?? '无管理员数据' }}</p>
+            <p><strong>普通用户数量:</strong> {{ SystemInfo?.userNum ?? '无普通用户数据' }}</p>
+            <p><strong>商品数量: </strong>{{ SystemInfo?.productNum ?? '无商品数据' }}</p>
+            <p><strong>订单数量:</strong> {{ SystemInfo?.dealNum ?? '无订单数据' }}</p>
+            <p><strong>评论数量:</strong> {{ SystemInfo?.commentNum ?? '无数量数据' }}</p>
+            <p><strong>举报数量:</strong> {{ SystemInfo?.reportNum ?? '无举报数据' }}</p>
+            <p><strong>会话数量:</strong> {{ SystemInfo?.sessionNum ?? '无会话数据' }}</p>
+            <br>
+            <strong style="color:green">网站流动资金(万元):{{ SystemInfo?.totalMoney ?? '无流动资金数据' }}</strong>
+        </div>
+
+
     </div>
 
 
@@ -41,6 +56,7 @@
         el: '#app',
         data: {
             currentUser: null,
+            SystemInfo:null,
         },
         mounted() {
             this.LoadAccount();
@@ -66,11 +82,46 @@
 
                         if (storedUser) {
                             this.currentUser = storedUser.data;
-                            console.log("当前用户：", this.currentUser);
+                            this.LoadSystem();
 
                         } else {
 
                             console.log("未找到用户数据");
+                        }
+
+
+                    }
+                }
+            },
+            LoadSystem(){
+                if(this.currentUser==null||this.currentUser.role!=="ADMIN"){
+                    alert("你没有账号凭证");
+                    return;
+                }
+
+                let LoginHttp;
+                if(window.XMLHttpRequest){
+                    LoginHttp=new XMLHttpRequest();
+
+                }else{
+                    LoginHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                LoginHttp.open("POST","http://localhost:8080/QGfinalDemo_war/WebsServlet");
+                LoginHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+                let requestBody ="&method=LoadSystem";
+                LoginHttp.send(requestBody);
+                LoginHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+
+                        const storedSystemInfo=JSON.parse(event.target.responseText);
+
+                        if (storedSystemInfo) {
+                            this.SystemInfo = storedSystemInfo.data;
+
+                        } else {
+
+                            console.log("未找到系统数据");
                         }
 
 

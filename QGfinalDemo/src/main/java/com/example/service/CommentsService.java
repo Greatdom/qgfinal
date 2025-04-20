@@ -28,7 +28,7 @@ public class CommentsService {
             dbProduct.setId(dbDeal.getProductId());
             dbProduct = productMapper.selectById(dbProduct);
             Account dbaccount = new Account();
-            dbaccount.setId(dbDeal.getUserId());
+            dbaccount.setId(dbProduct.getUserId());
             dbaccount = userMapper.selectSingle(dbaccount);
             count = productMapper.whileCommenting(dbProduct,comments,dbaccount);
         }
@@ -51,7 +51,6 @@ public class CommentsService {
             Systeminfo systeminfo = Systeminfo.getInstance();
             systeminfo.setCommentNum(systeminfo.getCommentNum()-1);
             SysteminfoMapper systeminfoMapper = new SysteminfoMapper();
-            systeminfoMapper.update(systeminfo);
 
             ProductMapper productMapper = new ProductMapper();
             DealMapper dealMapper = new DealMapper();
@@ -62,10 +61,11 @@ public class CommentsService {
             dbProduct.setId(dbDeal.getProductId());
             dbProduct = productMapper.selectById(dbProduct);
             Account dbaccount = new Account();
-            dbaccount.setId(dbDeal.getUserId());
+            dbaccount.setId(dbProduct.getUserId());
             dbaccount = userMapper.selectSingle(dbaccount);
             int count = productMapper.whileCancelCommenting(dbProduct,dbcomments,dbaccount);
             if(count>0){
+                systeminfoMapper.update(systeminfo);
                 return commentsMapper.deleteById(id);
             }else{
                 return 0;

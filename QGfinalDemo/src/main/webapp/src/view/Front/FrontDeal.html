@@ -30,6 +30,120 @@
     </div>
     <div class="right">
 
+        <div class="HeaderList"
+             style="display: flex;justify-content: space-between;height:15%;width:98%;background-color: cornflowerblue">
+            <div>
+                <p style="font-size: 12px"><strong>正在焦点的订单</strong>：{{FocusDeal? FocusDeal.id:"无焦点"}}</p>
+            </div>
+
+            <div>
+                <strong v-show="FocusDeal&&!FocusComment">对该订单进行评论</strong><br>
+                <button v-show="FocusDeal&&!FocusComment" class="updateButton" @click="ShowAddCommentForm"><strong>评论</strong></button>
+                <strong v-show="!FocusDeal||FocusComment">没有焦点或已评论无法评论</strong><br>
+                <button v-show="!FocusDeal||FocusComment" class="noneUpdateButton">评论</button>
+            </div>
+            <div>
+                <strong v-show="FocusDeal">对该订单进行退货</strong><br>
+                <button v-show="FocusDeal" class="updateButton"><strong>退货</strong></button>
+                <strong v-show="!FocusDeal">没有焦点无法对该订单进行退货</strong><br>
+                <button v-show="!FocusDeal" class="noneUpdateButton">退货</button>
+            </div>
+            <div>
+                <strong v-show="FocusDeal">举报订单</strong><br>
+                <button v-show="FocusDeal" class="updateButton"><strong>举报</strong></button>
+                <strong v-show="!FocusDeal">没有焦点无法举报订单</strong><br>
+                <button v-show="!FocusDeal" class="noneUpdateButton">举报</button>
+            </div>
+        </div>
+
+        <div class="LeftList" style="display: inline-block;width:70%;height: 80%">
+            <table>
+                <thead style="display:block;width:100%;height: 10%">
+                <tr style="background-color: cadetblue">
+                    <td><strong>ID</strong></td>
+                    <td><strong>支付方式</strong></td>
+                    <td><strong>订单状态</strong></td>
+                    <td><strong>下单时间</strong></td>
+                    <td><strong>商品ID</strong></td>
+                    <td><strong>购买数量</strong></td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-show="!DealTable" class="NONE">
+                    <td><strong>无数据!</strong></td>
+                </tr>
+                <tr v-for="deal in DealTable" :key="deal.id" @click="FocusOnProduct(deal)">
+                    <td>{{ deal?.id||'无ID数据'}}</td>
+                    <td>{{ deal?.payMethod||'无支付方式数据'}}</td>
+                    <td>{{ deal?.dealStatus||'无订单状态数据'}}</td>
+                    <td>{{ deal?.dealTime||'无下单时间数据'}}</td>
+                    <td>{{ deal?.productId||'无商品ID数据'}}</td>
+                    <td>{{ deal?.productNum||'无购买数量数据'}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="RightList">
+            <h2 style="display:block;width:100%;text-align:center;padding:10px 0;">查看订单和评论</h2>
+
+            <strong>关于商品</strong>
+            <p>名称:{{FocusProduct?.name||"无商品名称数据"}}</p>
+            <p>介绍:{{FocusProduct?.description||"无商品介绍数据"}}</p>
+            <p>商品状态:{{FocusProduct?.publishStatus||"无商品状态数据"}}</p>
+            <strong>关于订单</strong>
+            <p>付款方式:{{FocusDeal?.payMethod || "无付款方法数据"}}</p>
+            <p>订单状态:{{FocusDeal?.dealStatus || "无订单状态数据"}}</p>
+            <p>付款时间:{{FocusDeal?.dealTime || "无付款时间数据"}}</p>
+            <p>购买者ID:{{FocusDeal?.userId || "无购买者ID数据"}}</p>
+            <p>购买数量:{{FocusDeal?.productNum || "无购买数量数据"}}</p>
+            <strong>对该订单的评论</strong>
+            <p>评分:{{FocusComment?.score ?? '无评分数据'}}</p>
+            <p>评论内容:{{FocusComment?.content || '无评论内容'}}</p>
+            <p>评论时间:{{FocusComment?.commentTime || '无评论时间数据'}}</p>
+            <div>
+                <button v-show="FocusComment" @click="ShowDeleteCommentForm" class="updateButton"><strong>撤销评论</strong></button>
+            </div>
+        </div>
+
+    </div>
+<!--    写评论-->
+    <div v-show="AddCommentForm" class="HoldForm">
+        <div class="form">
+            <h2 style="display:block;width:100%;text-align:center;padding:10px 0;">写评论</h2>
+
+            <div class="inputText" style="margin-bottom:8px">
+                <strong style="margin:0 8px">评分:</strong>
+                <select v-model="AddCommentScore">
+                    <option value="-2">乐色</option>
+                    <option value="0">一般</option>
+                    <option value="2">美妙</option>
+                </select>
+            </div>
+            <div class="inputText">
+                <strong style="margin:0 8px">评论:</strong><textarea v-model="AddCommentContent" style="resize: none;" cols="30" rows="3"></textarea>
+            </div>
+
+            <div>
+                <button @click="CancelAddComment" class="formButton" style="background-color:darkorange;color: aliceblue">取消</button>
+            </div>
+            <div>
+                <button @click="SaveAddComment" class="formButton" style="background-color: darkgreen;color:aliceblue">确认</button>
+            </div>
+        </div>
+    </div>
+<!--    撤销评论-->
+    <div v-show="DeleteCommentForm" class="HoldForm">
+        <div class="form">
+            <h2 style="display:block;width:100%;text-align:center;padding:10px 0;">你真的要撤销评论吗</h2>
+
+            <div>
+                <button @click="ShowDeleteCommentForm" class="formButton" style="background-color:darkorange;color: aliceblue">取消</button>
+            </div>
+            <div>
+                <button @click="SaveDeleteComment" class="formButton" style="background-color: darkgreen;color:aliceblue">确认</button>
+            </div>
+        </div>
     </div>
 
 
@@ -39,13 +153,142 @@
     new Vue({
         el: '#app',
         data: {
+
+            //AddComment
+            AddCommentScore:0,
+            AddCommentContent:"",
+
             currentUser: null,
             DealTable:null,
+            FocusDeal:null,
+            FocusProduct:null,
+            FocusComment:null,
+            AddCommentForm:false,
+            DeleteCommentForm:false,
         },
         mounted() {
             this.LoadAccount();
         },
         methods:{
+
+            SaveDeleteComment(){
+
+
+                let requestBody;
+                requestBody = "id=" + encodeURIComponent(this.FocusComment.id)
+                    + "&method=SaveDeleteComment";
+                let UpdateHttp;
+                if(window.XMLHttpRequest){
+                    UpdateHttp=new XMLHttpRequest();
+                }else{
+                    UpdateHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                UpdateHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Front/Deal");
+                UpdateHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                UpdateHttp.send(requestBody);
+                UpdateHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        let result = JSON.parse(event.target.responseText);
+                        alert(result.msg);
+                        this.LoadDeal();
+                        this.ShowDeleteCommentForm();
+                        this.FocusDeal=null;
+                        this.FocusProduct=null;
+                        this.FocusComment=null;
+                    }
+                }
+
+
+            },
+            CancelAddComment(){
+                this.ShowAddCommentForm();
+                this.AddCommentScore=0;
+                this.AddCommentContent="";
+            },
+            SaveAddComment(){
+
+
+                let requestBody;
+                requestBody = "score=" + encodeURIComponent(this.AddCommentScore)
+                    + "&content=" + encodeURIComponent(this.AddCommentContent)
+                    + "&dealId=" + encodeURIComponent(this.FocusDeal.id)
+                    + "&method=SaveAddComment";
+                let UpdateHttp;
+                if(window.XMLHttpRequest){
+                    UpdateHttp=new XMLHttpRequest();
+                }else{
+                    UpdateHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                UpdateHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Front/Deal");
+                UpdateHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                UpdateHttp.send(requestBody);
+                UpdateHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        let result = JSON.parse(event.target.responseText);
+                        alert(result.msg);
+                        this.LoadDeal();
+                        this.CancelAddComment();
+                        this.FocusDeal=null;
+                        this.FocusProduct=null;
+                        this.FocusComment=null;
+                    }
+                }
+
+
+            },
+            FocusOnDeal(){
+
+
+                let LoadHttp;
+                if(window.XMLHttpRequest){
+                    LoadHttp=new XMLHttpRequest();
+
+                }else{
+                    LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Front/Deal");
+                LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                let requestBody = "method=FocusOnDeal"
+                    +"&dealId=" + encodeURIComponent(this.FocusDeal.id);
+                LoadHttp.send(requestBody);
+                LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        let result = JSON.parse(event.target.responseText);
+                        if (result.code === "200") {
+                            this.FocusComment = result.data;
+                        } else {
+                            this.FocusComment=null;
+                        }
+                    }
+                }
+            },
+            FocusOnProduct(somebody){
+                this.FocusDeal=somebody;
+                let LoadHttp;
+                if(window.XMLHttpRequest){
+                    LoadHttp=new XMLHttpRequest();
+
+                }else{
+                    LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Front/Deal");
+                LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                let requestBody = "method=FocusOnProduct"
+                    +"&productId=" + encodeURIComponent(this.FocusDeal.productId);
+                LoadHttp.send(requestBody);
+                LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        let result = JSON.parse(event.target.responseText);
+                        if (result.code === "200") {
+                            this.FocusProduct = result.data;
+                            this.FocusOnDeal();
+                        } else {
+                            this.FocusProduct=null;
+                            this.FocusComment=null;
+                        }
+                    }
+                }
+            },
             LoadDeal(){
                 let LoadHttp;
                 if(window.XMLHttpRequest){
@@ -89,7 +332,7 @@
 
                         if (storedUser) {
                             this.currentUser = storedUser.data;
-                            console.log("当前用户：", this.currentUser);
+                            this.LoadDeal();
 
                         } else {
 
@@ -114,6 +357,12 @@
                 let requestBody ="&method=logout";
                 LoginHttp.send(requestBody);
                 window.location.href = "../login.html";
+            },
+            ShowAddCommentForm(){
+                this.AddCommentForm=!this.AddCommentForm;
+            },
+            ShowDeleteCommentForm(){
+                this.DeleteCommentForm=!this.DeleteCommentForm;
             }
         }
     });

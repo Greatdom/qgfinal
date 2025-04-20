@@ -30,6 +30,149 @@
     </div>
     <div class="right">
 
+
+        <div class="HeaderList"
+             style="display: flex;justify-content: space-between;height:15%;width:98%;background-color: cornflowerblue">
+            <div>
+                <p style="font-size: 12px"><strong>正在焦点的商品</strong>：{{FocusProduct? FocusProduct.id:"无焦点"}}</p>
+                <p style="font-size: 12px"><strong>正在焦点的订单</strong>：{{FocusDeal? FocusDeal.id:"无焦点"}}</p>
+                <br>
+                <strong>对商品关键字搜索:</strong>
+                <input type="text" v-model="selectWord">
+                <button class="updateButton" @click="SearchProduct">搜索</button>
+            </div>
+            <div>
+                <strong v-show="FocusProduct">和商家进行私聊</strong><br>
+                <button v-show="FocusProduct" class="updateButton"><strong>和商家私聊</strong></button>
+                <strong v-show="!FocusProduct">没有焦点无法和商家私聊</strong><br>
+                <button v-show="!FocusProduct" class="noneUpdateButton">和商家私聊</button>
+            </div>
+            <div>
+                <strong v-show="FocusProduct">购买商品</strong><br>
+                <button v-show="FocusProduct" class="updateButton" @click="ShowBuyForm"><strong>下单</strong></button>
+                <strong v-show="!FocusProduct">没有焦点无法购买商品</strong><br>
+                <button v-show="!FocusProduct" class="noneUpdateButton">下单</button>
+            </div>
+            <div>
+                <strong v-show="FocusDeal">查看订单和评论</strong><br>
+                <button v-show="FocusDeal" class="updateButton" @click="ShowUpdateDealForm"><strong>订单信息</strong></button>
+                <strong v-show="!FocusDeal">没有焦点无法查看订单和评论</strong><br>
+                <button v-show="!FocusDeal" class="noneUpdateButton">订单信息</button>
+            </div>
+        </div>
+
+        <div class="LeftList" style="display: inline-block;width:70%;height: 80%">
+            <table>
+                <thead style="display:block;width:100%;height: 10%">
+                <tr style="background-color: cadetblue">
+                    <td><strong>ID</strong></td>
+                    <td><strong>名称</strong></td>
+                    <td><strong>数量</strong></td>
+                    <td><strong>分类</strong></td>
+                    <td><strong>介绍</strong></td>
+                    <td><strong>价格</strong></td>
+                    <td><strong>总评分</strong></td>
+                    <td><strong>流量</strong></td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-show="!ProductTable" class="NONE">
+                    <td><strong>无数据!</strong></td>
+                </tr>
+                <tr v-for="product in ProductTable" :key="product.id" @click="FocusOnProduct(product)">
+                    <td>{{ product?.id||'无ID数据'}}</td>
+                    <td>{{ product?.name||'无名称数据'}}</td>
+                    <td>{{ product?.stock || '无库存数据' }}</td>
+                    <td>{{ product?.category || '无分类数据' }}</td>
+                    <td>{{ product?.description || '无商品介绍数据' }}</td>
+                    <td>{{ product?.price ?? '无价格数据' }}</td>
+                    <td>{{ product?.score ?? '无总评分数据' }}</td>
+                    <td>{{ product?.popularity ?? '无流量数据' }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <div class="RightList">
+            <table>
+                <thead style="display:block;width:100%;height: 10%">
+                <tr style="background-color: cadetblue">
+                    <td><strong>订单ID</strong></td>
+                    <td><strong>数量</strong></td>
+                    <td><strong>状态</strong></td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-show="!DealTable" class="NONE">
+                    <td color="black"><strong>{{ FocusProduct ? "没有订单" : '无订单数据！' }}</strong></td>
+                </tr>
+                <tr v-for="deal in DealTable" :key="deal.id" @click="FocusOnDeal(deal)">
+                    <td>{{ deal?.id||'无ID' }}</td>
+                    <td>{{ deal?.productNum||'无数量' }}</td>
+                    <td>{{ deal?.dealStatus||'无状态' }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    <!--    查看订单和评论-->
+    <div v-show="UpdateDealForm" class="HoldForm">
+        <div class="form">
+            <h2 style="display:block;width:100%;text-align:center;padding:10px 0;">查看订单和评论</h2>
+
+            <strong>关于商品</strong>
+            <p>名称:{{FocusProduct?.name||"无商品名称数据"}}</p>
+            <p>介绍:{{FocusProduct?.description||"无商品介绍数据"}}</p>
+            <p>商品状态:{{FocusProduct?.publishStatus||"无商品状态数据"}}</p>
+            <strong>关于订单</strong>
+            <p>付款方式:{{FocusDeal?.payMethod || "无付款方法数据"}}</p>
+            <p>订单状态:{{FocusDeal?.dealStatus || "无订单状态数据"}}</p>
+            <p>付款时间:{{FocusDeal?.dealTime || "无付款时间数据"}}</p>
+            <p>购买者ID:{{FocusDeal?.userId || "无购买者ID数据"}}</p>
+            <p>购买数量:{{FocusDeal?.productNum || "无购买数量数据"}}</p>
+            <strong>对该订单的评论</strong>
+            <p>评分:{{CommentTable?.score ?? '无评分数据'}}</p>
+            <p>评论内容:{{CommentTable?.content || '无评论内容'}}</p>
+            <p>评论时间:{{CommentTable?.commentTime || '无评论时间数据'}}</p>
+
+
+            <div>
+                <button @click="ShowUpdateDealForm" class="formButton" style="background-color: darkgreen;color:aliceblue">关闭</button>
+            </div>
+        </div>
+    </div>
+
+<!--    购买商品-->
+    <div v-show="BuyForm" class="HoldForm">
+        <div class="form">
+            <h2 style="display:block;width:100%;text-align:center;padding:10px 0;">购买商品</h2>
+            <p>名称:{{FocusProduct?.name||"无商品名称数据"}}</p>
+            <p>介绍:{{FocusProduct?.description||"无商品介绍数据"}}</p>
+            <p>商品状态:{{FocusProduct?.publishStatus||"无商品状态数据"}}</p>
+
+            <div class="inputText">
+                <strong style="margin:0 8px">购买数量:</strong>
+                <input type="number" v-model="PayNum" min="1" max="10" step="1" placeholder="请输入购买数量1~10" required>
+            </div>
+            <div class="inputText">
+                <strong style="margin:0 8px">商品分类:</strong>
+                <select v-model="PayMethod">
+                    <option value="货到付款">货到付款</option>
+                    <option value="即买即付">即买即付</option>
+                </select>
+            </div>
+            <div class="inputText">
+                <strong style="margin:0 8px">付款密码:</strong><input v-model="PayPassword" type="password" placeholder="请输入付款密码">
+            </div>
+            <div>
+                <button @click="CancelBuyForm" class="formButton" style="background-color:darkorange;color: aliceblue">取消</button>
+            </div>
+            <div>
+                <button @click="SaveBuyForm" class="formButton" style="background-color: darkgreen;color:aliceblue">下单</button>
+            </div>
+        </div>
     </div>
 
 
@@ -39,12 +182,35 @@
     new Vue({
         el: '#app',
         data: {
+
+            //购买商品
+            PayNum:1,
+            PayMethod:"即买即付",
+            PayPassword:"",
+
+
             currentUser: null,
+            selectWord:"",
+            ProductTable:null,
+            DealTable:null,
+            FocusProduct:null,
+            FocusDeal:null,
+            CommentTable:null,
+            UpdateDealForm:false,
+            BuyForm:false,
+
         },
         mounted() {
             this.LoadAccount();
+            this.LoadProduct();
         },
         methods:{
+            CancelBuyForm(){
+                this.ShowBuyForm();
+            },
+            SaveBuyForm(){
+                this.ShowBuyForm();
+            },
             LoadAccount(){
                 let LoginHttp;
                 if(window.XMLHttpRequest){
@@ -90,7 +256,110 @@
                 let requestBody ="&method=logout";
                 LoginHttp.send(requestBody);
                 window.location.href = "../login.html";
-            }
+            },
+            SearchProduct(){
+              this.LoadProduct();
+              this.selectWord="";
+              this.DealTable=null;
+              this.FocusProduct=null;
+              this.FocusDeal=null;
+              this.CommentTable=null;
+
+            },
+            LoadProduct(){
+                let LoadHttp;
+                if(window.XMLHttpRequest){
+                    LoadHttp=new XMLHttpRequest();
+
+                }else{
+                    LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Front/Product");
+                LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                let requestBody = "method=loadProduct"
+                    + "&selectWord=" + encodeURIComponent(this.selectWord);
+
+                LoadHttp.send(requestBody);
+                LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        let result = JSON.parse(event.target.responseText);
+                        if (result.code === "200") {
+                            this.ProductTable = result.data;
+                        } else {
+                            alert(result.msg);
+                        }
+                    }
+                }
+            },
+            FocusOnProduct(somebody){
+                this.FocusProduct=somebody;
+                let LoadHttp;
+                if(window.XMLHttpRequest){
+                    LoadHttp=new XMLHttpRequest();
+
+                }else{
+                    LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Front/Product");
+                LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                let requestBody = "method=FocusOnProduct"
+                    +"&productId=" + encodeURIComponent(somebody.id);
+                LoadHttp.send(requestBody);
+                LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        let result = JSON.parse(event.target.responseText);
+                        if (result.code === "200") {
+                            this.DealTable = result.data;
+                            if(this.DealTable.length === 0)
+                                this.DealTable=null;
+                        } else {
+                            this.DealTable=null;
+                        }
+                        this.UpdateDescription=this.FocusProduct?.description||"";
+                        this.UpdatePrice=this.FocusProduct?.price||1;
+                        this.UpdateStock=this.FocusProduct?.stock||1;
+                        this.UpdateCategory=this.FocusProduct?.category||"文具";
+                        this.UpdateAvatar=this.FocusProduct?.avatar||"";
+                    }
+                }
+            },
+            FocusOnDeal(somebody){
+
+
+                this.FocusDeal=somebody;
+
+                let LoadHttp;
+                if(window.XMLHttpRequest){
+                    LoadHttp=new XMLHttpRequest();
+
+                }else{
+                    LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Front/Product");
+                LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                let requestBody = "method=FocusOnDeal"
+                    +"&dealId=" + encodeURIComponent(somebody.id);
+                LoadHttp.send(requestBody);
+                LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        let result = JSON.parse(event.target.responseText);
+                        if (result.code === "200") {
+                            this.CommentTable = result.data;
+                            console.log("评论"+this.CommentTable);
+                            if(this.CommentTable.length === 0)
+                                this.CommentTable=null;
+                        } else {
+                            this.CommentTable=null;
+                        }
+                    }
+                }
+            },
+            ShowUpdateDealForm(){
+                this.UpdateDealForm=!this.UpdateDealForm;
+            },
+            ShowBuyForm(){
+                this.BuyForm=!this.BuyForm;
+            },
         }
     });
 </script>

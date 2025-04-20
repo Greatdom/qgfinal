@@ -25,20 +25,23 @@ public class ProductMapper {
         return CRUDUtils.insert(insertSql, name, description, price, stock, category, avatar, publishTime, publishStatus, userId);
     }
     public List<Product> selectList(String searchWord,String publishStatus) {
-        if(searchWord==null|| searchWord.isEmpty()){
-            return null;
-        }
         if(publishStatus==null|| publishStatus.isEmpty()){
             return null;
         }
-        searchWord = "%" + searchWord + "%";
-        String selectSql="select * from product"
-                + " where (name like ?"
-                + " or description like ?"
-                + " or category like ?"
-                + " or user_id like ?)"
-                + " and publish_status = ?";
-        return CRUDUtils.queryForList(Product.class,selectSql,searchWord,searchWord,searchWord,searchWord,publishStatus);
+        if(searchWord==null|| searchWord.isEmpty()){
+            String selectSql="select * from product where publish_status=?";
+            return CRUDUtils.queryForList(Product.class,selectSql,publishStatus);
+        }else{
+            searchWord = "%" + searchWord + "%";
+            String selectSql="select * from product"
+                    + " where (name like ?"
+                    + " or description like ?"
+                    + " or category like ?"
+                    + " or user_id like ?)"
+                    + " and publish_status = ?";
+            return CRUDUtils.queryForList(Product.class,selectSql,searchWord,searchWord,searchWord,searchWord,publishStatus);
+        }
+
 
     }
     public Product selectById(Product product) {

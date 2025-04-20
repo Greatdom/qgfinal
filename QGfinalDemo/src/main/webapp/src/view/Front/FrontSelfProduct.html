@@ -34,8 +34,8 @@
         <div class="HeaderList"
              style="display: flex;justify-content: space-between;height:15%;width:98%;background-color: cornflowerblue">
             <div>
-                <p>正在焦点的商品：{{FocusProduct? FocusProduct.id:"无焦点"}}</p>
-                <p>正在焦点的订单：{{FocusDeal? FocusDeal.id:"无焦点"}}</p>
+                <p style="font-size: 12px"><strong>正在焦点的商品</strong>：{{FocusProduct? FocusProduct.id:"无焦点"}}</p>
+                <p style="font-size: 12px"><strong>正在焦点的订单</strong>：{{FocusDeal? FocusDeal.id:"无焦点"}}</p>
             </div>
             <div>
                 <strong v-show="FocusProduct">查看和修改商品信息</strong><br>
@@ -122,6 +122,10 @@
         <div class="form">
             <h2 style="display:block;width:100%;text-align:center;padding:10px 0;">查看订单和评论</h2>
 
+            <strong>关于商品</strong>
+            <p>名称:{{FocusProduct?.name||"无商品名称数据"}}</p>
+            <p>介绍:{{FocusProduct?.description||"无商品介绍数据"}}</p>
+            <p>商品状态:{{FocusProduct?.publishStatus||"无商品状态数据"}}</p>
             <strong>关于订单</strong>
             <p>付款方式:{{FocusDeal?.payMethod || "无付款方法数据"}}</p>
             <p>订单状态:{{FocusDeal?.dealStatus || "无订单状态数据"}}</p>

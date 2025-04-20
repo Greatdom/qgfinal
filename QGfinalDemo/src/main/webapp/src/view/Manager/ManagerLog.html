@@ -31,6 +31,46 @@
     </div>
     <div class="right">
 
+
+        <div class="HeaderList"
+             style="display: flex;justify-content: space-between;height:15%;width:98%;background-color: cornflowerblue">
+            <div>
+                <br>
+                <strong>对日志关键字搜索:</strong>
+                <input type="text" v-model="selectWord">
+                <button class="updateButton" @click="SearchLog">搜索</button>
+            </div>
+
+        </div>
+
+        <div class="LeftList" style="display: inline-block;width:70%;height: 80%">
+            <table>
+                <thead style="display:block;width:100%;height: 10%">
+                <tr style="background-color: cadetblue">
+                    <td><strong>ID</strong></td>
+                    <td><strong>操作者</strong></td>
+                    <td><strong>操作类型</strong></td>
+                    <td><strong>操作内容</strong></td>
+                    <td><strong>操作IP</strong></td>
+                    <td><strong>操作时间</strong></td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-show="!LogTable" class="NONE">
+                    <td><strong>无数据!</strong></td>
+                </tr>
+                <tr v-for="log in LogTable" :key="log.id">
+                    <td>{{ log?.operateUsername||'无ID数据'}}</td>
+                    <td>{{ log?.operateContent||'无操作者数据'}}</td>
+                    <td>{{ log?.operateType||'无操作种类数据'}}</td>
+                    <td>{{ log?.operateContent||'无操作内容数据'}}</td>
+                    <td>{{ log?.ip||'无IP数据'}}</td>
+                    <td>{{ log?.operateTime||'无操作时间数据'}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
     </div>
 
 
@@ -41,6 +81,8 @@
         el: '#app',
         data: {
             currentUser: null,
+            LogTable:null,
+            selectWord:"",
         },
         mounted() {
             this.LoadAccount();
@@ -66,7 +108,7 @@
 
                         if (storedUser) {
                             this.currentUser = storedUser.data;
-                            console.log("当前用户：", this.currentUser);
+                            this.LoadLog();
 
                         } else {
 
@@ -74,6 +116,36 @@
                         }
 
 
+                    }
+                }
+            },
+            SearchLog(){
+                this.LoadLog();
+                this.selectWord="";
+            },
+            LoadLog(){
+                let LoadHttp;
+                if(window.XMLHttpRequest){
+                    LoadHttp=new XMLHttpRequest();
+
+                }else{
+                    LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Manager/Log");
+                LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+                let requestBody ="&method=LoadLog"
+                    + "&selectWord=" + encodeURIComponent(this.selectWord);
+                LoadHttp.send(requestBody);
+                LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        const storedLog=JSON.parse(event.target.responseText);
+                        if (storedLog) {
+                            this.LogTable = storedLog.data;
+                            console.log(this.LogTable);
+                        } else {
+                            console.log("未找到日志数据");
+                        }
                     }
                 }
             },

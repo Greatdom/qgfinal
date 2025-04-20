@@ -33,5 +33,8 @@ public class LogService {
     public List<Log> selectAll() {
         return logMapper.selectAll();
     }
+    public List<Log> selectList(String searchWord){
+        return logMapper.selectList(searchWord);
+    }
 
 }

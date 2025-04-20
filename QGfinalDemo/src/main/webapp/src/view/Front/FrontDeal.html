@@ -40,11 +40,35 @@
         el: '#app',
         data: {
             currentUser: null,
+            DealTable:null,
         },
         mounted() {
             this.LoadAccount();
         },
         methods:{
+            LoadDeal(){
+                let LoadHttp;
+                if(window.XMLHttpRequest){
+                    LoadHttp=new XMLHttpRequest();
+
+                }else{
+                    LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Front/Deal");
+                LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                let requestBody = "method=loadDeal"
+                    + "&userId=" + encodeURIComponent(this.currentUser.id);
+
+                LoadHttp.send(requestBody);
+                LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        let result = JSON.parse(event.target.responseText);
+                        if (result.code === "200") {
+                            this.DealTable = result.data;
+                        }
+                    }
+                }
+            },
             LoadAccount(){
                 let LoginHttp;
                 if(window.XMLHttpRequest){

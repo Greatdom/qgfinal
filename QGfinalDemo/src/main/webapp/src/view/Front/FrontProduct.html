@@ -43,7 +43,7 @@
             </div>
             <div>
                 <strong v-show="FocusProduct">和商家进行私聊</strong><br>
-                <button v-show="FocusProduct" class="updateButton"><strong>和商家私聊</strong></button>
+                <button v-show="FocusProduct" class="updateButton" @click="GoToChat"><strong>和商家私聊</strong></button>
                 <strong v-show="!FocusProduct">没有焦点无法和商家私聊</strong><br>
                 <button v-show="!FocusProduct" class="noneUpdateButton">和商家私聊</button>
             </div>
@@ -202,9 +202,19 @@
         },
         mounted() {
             this.LoadAccount();
-            this.LoadProduct();
         },
         methods:{
+            GoToChat(){
+                const firstMan=this.currentUser.id;
+                const secondMan=this.FocusProduct.userId;
+                if(firstMan===secondMan){
+                    alert("不允许私聊自己");
+                }else{
+                    window.location.href = "FrontChatRoom.html?firstMan="+ firstMan +"&secondMan="+secondMan
+                    +"&firstRole=USER&secondRole=USER";
+                }
+
+            },
             CancelBuyForm(){
                 this.ShowBuyForm();
                 this.PayNum=1;
@@ -272,6 +282,7 @@
 
                         if (storedUser) {
                             this.currentUser = storedUser.data;
+                            this.LoadProduct();
                             console.log("当前用户：", this.currentUser);
 
                         } else {

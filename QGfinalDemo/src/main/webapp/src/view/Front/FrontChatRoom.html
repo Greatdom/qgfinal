@@ -30,6 +30,17 @@
     </div>
     <div class="right">
 
+        <div>
+            <h1>WebSocket Chat</h1>
+            <ul>
+                <li v-for="(message, index) in messages" :key="index">{{ message }}</li>
+            </ul>
+            <input v-model="newMessage" @keyup.enter="sendMessage" placeholder="Type a message...">
+            <button @click="sendMessage">Send</button>
+        </div>
+        <div>head:{{ firstMan }}</div>
+        <div>hind:{{ secondMan }}</div>
+        <div>{{secondRole}}</div>
     </div>
 
 
@@ -40,11 +51,52 @@
         el: '#app',
         data: {
             currentUser: null,
+            socket:null,
+            messages: [],
+            newMessage: '',
+            firstMan:"",
+            secondMan:"",
+            secondRole:"",
         },
         mounted() {
+            this.init();
             this.LoadAccount();
         },
         methods:{
+            init(){
+
+                const urlParams = new URLSearchParams(window.location.search);
+                this.firstMan = urlParams.get('firstMan');
+                this.secondMan = urlParams.get('secondMan');
+                this.secondRole = urlParams.get('secondRole');
+            },
+
+
+            initWebSocket() {
+                this.socket = new WebSocket('ws://' + window.location.host + '/QGfinalDemo_war/websocket'); // 替换为你的 WebSocket 服务器地址
+                this.socket.onopen = () => {
+                    console.log('WebSocket连接已打开');
+                };
+                this.socket.onmessage = (event) => {
+                    this.messages.push(event.data);
+                };
+                this.socket.onclose = () => {
+                    console.log('WebSocket连接已关闭');
+                };
+                this.socket.onerror = (error) => {
+                    this.messages.push(`某人已错误`);
+                    console.error('WebSocket发生错误：', error);
+                };
+            },
+            sendMessage() {
+                if (this.newMessage.trim() !== '') {
+                    this.socket.send(this.newMessage);
+                    this.messages.push(`You: ${this.newMessage}`);
+                    this.newMessage = '';
+                }
+            },
+
+
             LoadAccount(){
                 let LoginHttp;
                 if(window.XMLHttpRequest){
@@ -63,16 +115,15 @@
 
                         const storedUser=JSON.parse(event.target.responseText);
 
-                        if (storedUser) {
+                        if (storedUser)
                             this.currentUser = storedUser.data;
-                            console.log("当前用户：", this.currentUser);
-
-                        } else {
-
-                            console.log("未找到用户数据");
+                        else console.log("未找到用户数据");
+                        if(this.currentUser.role==="USER")
+                            this.initWebSocket();
+                        else{
+                            this.currentUser=null;
+                            alert("你不是用户!");
                         }
-
-
                     }
                 }
             },

@@ -30,17 +30,80 @@
     </div>
     <div class="right">
 
-        <div>
-            <h1>WebSocket Chat</h1>
-            <ul>
-                <li v-for="(message, index) in messages" :key="index">{{ message }}</li>
-            </ul>
-            <input v-model="newMessage" @keyup.enter="sendMessage" placeholder="Type a message...">
-            <button @click="sendMessage">Send</button>
+        <div class="RightList" style="height:80%">
+            <h3>会话列表</h3>
+            <table>
+                <thead style="display:block;width:100%;height: 10%">
+                <tr style="background-color: cadetblue">
+                    <td><strong>会话列表</strong></td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-show="!SessionTable" class="NONE">
+                    <td><strong>无数据!</strong></td>
+                </tr>
+                <tr v-for="session in SessionTable" :key="session.id" @click="FocusOnSession(session)">
+                    <td v-if="FocusSession==null&&session.headRole==='SYSTEM'">与[系统管理员]的会话</td>
+                    <td v-else-if="FocusSession==null||FocusSession.id!==session.id">与用户ID:[{{ session.headId===currentUser.id? session.hindId:session.headId }}]的会话</td>
+                    <td v-show="FocusSession!=null&&FocusSession.id===session.id">与用户:[{{ FocusCounterPart }}]的会话</td>
+                </tr>
+                </tbody>
+            </table>
         </div>
-        <div>head:{{ firstMan }}</div>
-        <div>hind:{{ secondMan }}</div>
-        <div>{{secondRole}}</div>
+        <div class="LeftList" style="display: inline-block;width:70%;height: 80%;background-color: whitesmoke">
+            <table>
+                <thead style="display:block;width:100%;height: 10%">
+                <tr style="background-color: cadetblue">
+                    <td><strong>与[{{ FocusCounterPart }}]的会话</strong></td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-show="!SentenceTable" class="NONE">
+                    <td color="black"><strong>发条消息吧~</strong></td>
+                </tr>
+                <tr v-for="sentence in SentenceTable" :key="sentence.id">
+                    <td>{{ sentence?.id||'无ID' }}</td>
+                    <td>{{ sentence?.content||'无内容' }}</td>
+                    <td>{{ sentence?.sentenceTime||'无时间' }}</td>
+                    <td>{{ sentence?.userId||'无说话者ID' }}</td>
+                    <td>{{ sentence?.userRole||'无说话者角色' }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="HeaderList"
+             style="display: flex;justify-content: space-between;height:15%;width:98%;background-color: cornflowerblue">
+            <div>
+                <p style="font-size: 12px" v-if="FocusCounterPart"><strong>正在和用户[{{ FocusCounterPart }}]聊天</strong></p>
+                <p style="font-size: 12px" v-else><strong>尚未进入一段会话</strong></p>
+            </div>
+            <div style="width:20%;height:100%;background-color: greenyellow;border:black solid 5px;overflow: auto;
+    overflow-x: hidden;">
+                <h3>聊天室广播</h3>
+                <ul>
+                    <li v-for="(message, index) in PublicMessages" :key="index">{{ message }}</li>
+                </ul>
+            </div>
+            <div style="width:20%;height:100%;background-color: greenyellow;border:black solid 5px;overflow: auto;
+    overflow-x: hidden;">
+                <h3>新消息通知</h3>
+                <ul>
+                    <li v-for="(message, index) in UserMessages" :key="index">{{ message }}</li>
+                </ul>
+            </div>
+            <div>
+                <h2>WebSocket Chat</h2>
+                <input v-model="newMessage" @keyup.enter="sendMessage" placeholder="Type a message...">
+                <div>
+                    <button v-show="FocusSession" class="updateButton" @click="sendMessage"><strong>发送</strong></button>
+                    <button v-show="!FocusSession" class="noneUpdateButton">发送</button>
+                </div>
+            </div>
+        </div>
+
+
+
     </div>
 
 
@@ -52,33 +115,48 @@
         data: {
             currentUser: null,
             socket:null,
-            messages: [],
+            PublicMessages: [],
+            UserMessages:[],
             newMessage: '',
-            firstMan:"",
-            secondMan:"",
-            secondRole:"",
+
+            FocusSession:null,
+            FocusCounterPart:null,
+            SessionTable:null,
+            SentenceTable:null,
+
         },
         mounted() {
-            this.init();
             this.LoadAccount();
         },
         methods:{
-            init(){
-
-                const urlParams = new URLSearchParams(window.location.search);
-                this.firstMan = urlParams.get('firstMan');
-                this.secondMan = urlParams.get('secondMan');
-                this.secondRole = urlParams.get('secondRole');
+            sendMessage() {
+                if (this.newMessage.trim() !== '') {
+                    let counterpartId;
+                    if(this.FocusSession.headRole==="SYSTEM")counterpartId=0;
+                    else counterpartId=(this.currentUser.id===this.FocusSession.headId)?this.FocusSession.hindId:this.FocusSession.headId;
+                    this.newMessage=counterpartId+":"+this.FocusSession.id+":"+this.newMessage;
+                    this.socket.send(this.newMessage);
+                    this.newMessage = '';
+                }
             },
-
-
             initWebSocket() {
                 this.socket = new WebSocket('ws://' + window.location.host + '/QGfinalDemo_war/websocket'); // 替换为你的 WebSocket 服务器地址
                 this.socket.onopen = () => {
                     console.log('WebSocket连接已打开');
                 };
                 this.socket.onmessage = (event) => {
-                    this.messages.push(event.data);
+
+                    const message = event.data.split(":", 2);
+                    const type = message[0];
+                    const content = message[1];
+                    if(type==="PUBLIC"){
+                        this.PublicMessages.push(content);
+                    }else if(type==="USER"){
+                        this.UserMessages.push(content);
+                    }else if(type==="PRIVATE"){
+                        this.FocusOnSession(this.FocusSession);
+                    }
+
                 };
                 this.socket.onclose = () => {
                     console.log('WebSocket连接已关闭');
@@ -88,15 +166,144 @@
                     console.error('WebSocket发生错误：', error);
                 };
             },
-            sendMessage() {
-                if (this.newMessage.trim() !== '') {
-                    this.socket.send(this.newMessage);
-                    this.messages.push(`You: ${this.newMessage}`);
-                    this.newMessage = '';
+            FocusOnCounterPart(){
+                let userId=this.FocusSession.headId;
+                let userRole=this.FocusSession.headRole;
+                if(userId===this.currentUser.id&&userRole===this.currentUser.role){
+                    userId=this.FocusSession.hindId;
+                    userRole=this.currentUser.hindRole;
+                }
+                if(userRole==="SYSTEM"){
+                    this.FocusCounterPart="系统管理员";
+                    return;
+                }
+                let LoadHttp;
+                if(window.XMLHttpRequest){
+                    LoadHttp=new XMLHttpRequest();
+
+                }else{
+                    LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Front/Chat");
+                LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+                let requestBody = "method=FocusOnCounterPart"
+                    + "&userId=" + encodeURIComponent(userId);
+                LoadHttp.send(requestBody);
+                LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+
+                        const storedUser=JSON.parse(event.target.responseText);
+
+                        if (storedUser) {
+                            this.FocusCounterPart = storedUser.data.name;
+                            if(this.FocusCounterPart==null||this.FocusCounterPart===""){
+                                this.FocusCounterPart=storedUser.data.username;
+                            }
+                        }
+                        else console.log("未找到对方昵称或账号");
+                    }
+                }
+
+            },
+            FocusOnSession(somebody){
+                this.FocusSession=somebody;
+                let LoadHttp;
+                if(window.XMLHttpRequest){
+                    LoadHttp=new XMLHttpRequest();
+
+                }else{
+                    LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Front/Chat");
+                LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+                let requestBody = "method=FocusOnSession"
+                    + "&sessionId=" + encodeURIComponent(this.FocusSession.id);
+                LoadHttp.send(requestBody);
+                LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+
+                        const storedSentence=JSON.parse(event.target.responseText);
+
+                        if (storedSentence) {
+                            this.SentenceTable = storedSentence.data;
+                            this.FocusOnCounterPart();
+                        }
+                        else console.log("未找到会话数据");
+                    }
                 }
             },
+            LoadSession(){
+                let LoadHttp;
+                if(window.XMLHttpRequest){
+                    LoadHttp=new XMLHttpRequest();
 
+                }else{
+                    LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Front/Chat");
+                LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 
+                let requestBody = "method=LoadSession"
+                    + "&id=" + encodeURIComponent(this.currentUser.id)
+                    + "&role=" + encodeURIComponent(this.currentUser.role);
+                LoadHttp.send(requestBody);
+                LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+
+                        const storedSession=JSON.parse(event.target.responseText);
+
+                        if (storedSession)
+                            this.SessionTable = storedSession.data;
+                        else console.log("未找到会话数据");
+                    }
+                }
+            },
+            getSessionFormFrontProduct(){
+                const urlParams = new URLSearchParams(window.location.search);
+                const firstMan = urlParams.get('firstMan');
+                const secondMan = urlParams.get('secondMan');
+                const firstRole = urlParams.get("firstRole");
+                const secondRole = urlParams.get('secondRole');
+
+                if(firstMan!=null&&firstMan!==""&&secondMan!=null&&secondMan!==""){
+                    let LoadHttp;
+                    if(window.XMLHttpRequest){
+                        LoadHttp=new XMLHttpRequest();
+
+                    }else{
+                        LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                    }
+                    LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Front/Chat");
+                    LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+                    let requestBody = "firstMan=" + encodeURIComponent(firstMan)
+                            + "&secondMan=" + encodeURIComponent(secondMan)
+                            + "&firstRole=" + encodeURIComponent(firstRole)
+                            + "&secondRole=" + encodeURIComponent(secondRole)
+                            +"&method=getSessionFormFrontProduct";
+                    LoadHttp.send(requestBody);
+                    LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                        if (event.target.readyState === 4 && event.target.status === 200) {
+
+                            const storedSession=JSON.parse(event.target.responseText);
+
+                            if (storedSession) {
+                                if(storedSession.code==="200"){
+                                    this.FocusSession = storedSession.data;
+                                    this.FocusOnSession(this.FocusSession);
+                                }else alert("未成功获取会话");
+
+                            }
+                            else console.log("未找到会话数据");
+                        }
+                    }
+                }else{
+                    console.log("不是通过传入参数的形式来到这个页面");
+                }
+
+            },
             LoadAccount(){
                 let LoginHttp;
                 if(window.XMLHttpRequest){
@@ -118,9 +325,16 @@
                         if (storedUser)
                             this.currentUser = storedUser.data;
                         else console.log("未找到用户数据");
-                        if(this.currentUser.role==="USER")
-                            this.initWebSocket();
-                        else{
+                        if(this.currentUser.role==="USER") {
+                            if(this.currentUser.name!=null){
+                                this.getSessionFormFrontProduct();
+                                this.initWebSocket();
+                                this.LoadSession();
+                            }else{
+                                alert("请填写完个人信息并重新登录再解锁聊天室!")
+                            }
+
+                        }else{
                             this.currentUser=null;
                             alert("你不是用户!");
                         }

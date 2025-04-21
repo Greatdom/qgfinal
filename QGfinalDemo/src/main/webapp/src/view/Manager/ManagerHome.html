@@ -250,11 +250,10 @@
                                     this.ShowForm();
                                     this.OriginalPassword="";
                                     this.NewPassword="";
-                                    return;
+                                    this.logout();
                                 }else{
                                     alert(this.currentUser.msg);
                                     this.Cancel();
-                                    return;
                                 }
 
 

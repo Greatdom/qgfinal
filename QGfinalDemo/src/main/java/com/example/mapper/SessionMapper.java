@@ -36,7 +36,7 @@ public class SessionMapper {
         String acc1Role = acc1.getRole();
         String acc2Role = acc2.getRole();
         String selectSql="select * from session where "
-                + " ( head_id = ? and head_role = ? ) or ( hind_id = ? and hind_role = ? ) ";
+                + " ( head_id = ? and head_role = ? ) and ( hind_id = ? and hind_role = ? ) ";
         Session session=CRUDUtils.queryForObject(Session.class,selectSql,acc1Id,acc1Role,acc2Id,acc2Role);
         if(session==null){
             session=CRUDUtils.queryForObject(Session.class,selectSql,acc2Id,acc2Role,acc1Id,acc1Role);

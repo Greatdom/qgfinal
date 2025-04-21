@@ -282,8 +282,10 @@
 
                         if (storedUser) {
                             this.currentUser = storedUser.data;
-                            this.LoadProduct();
-                            console.log("当前用户：", this.currentUser);
+                            if(this.currentUser!=null&&this.currentUser.role==="USER"){
+                                this.LoadProduct();
+                            }
+
 
                         } else {
 

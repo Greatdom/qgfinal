@@ -6,11 +6,14 @@ import com.example.common.enums.LogsTypeEnum;
 import com.example.common.enums.ResultCodeEnum;
 import com.example.entity.Account;
 import com.example.entity.Log;
+import com.example.entity.Session;
 import com.example.entity.Systeminfo;
 import com.example.service.AdminService;
 import com.example.service.LogService;
+import com.example.service.SessionService;
 import com.example.service.UserService;
 import com.example.util.IpUtils;
+import com.example.util.TimeUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -207,6 +210,11 @@ public class WebsServlet extends BaseServlet {
             HttpSession session=request.getSession();
             session.setAttribute("username",username);
             session.setAttribute("role",role);
+            if (account != null) {
+                session.setAttribute("id",account.getId());
+                if(account.getName()!=null)
+                    session.setAttribute("name",account.getName());
+            }
         }
 
 
@@ -232,6 +240,7 @@ public class WebsServlet extends BaseServlet {
         account.setUsername(username);
         account.setPassword(password);
         account.setRole(role);
+        UserService userService=new UserService();
 
 //        HttpSession session=request.getSession();
 //        String checkCodeGen = (String) session.getAttribute("checkCodeGen");
@@ -248,7 +257,6 @@ public class WebsServlet extends BaseServlet {
                 if(adminService.register(account)!=0)result=Result.success(account);
                 else result=Result.error(ResultCodeEnum.USER_EXIST_ERROR);
             }else if("USER".equals(role)){
-                UserService userService=new UserService();
                 if(userService.register(account)!=0)result=Result.success(account);
                 else result=Result.error(ResultCodeEnum.USER_EXIST_ERROR);
             }else{
@@ -259,8 +267,20 @@ public class WebsServlet extends BaseServlet {
         if("200".equals(result.getCode())){
             LogService logService=new LogService();
             logService.recordLog(username,LogsTypeEnum.REGISTER.getValue(),"注册成功",request);
-        }
 
+            if("USER".equals(role)){
+                account = userService.selectSingle(account);
+                Session session = new Session();
+                session.setHeadId(1);
+                session.setHeadRole("SYSTEM");
+                session.setHindId(account.getId());
+                session.setHindRole(account.getRole());
+                session.setSessionTime(TimeUtil.getTime());
+                SessionService sessionService=new SessionService();
+                sessionService.add(session);
+            }
+
+        }
         String jsonStr= JSON.toJSONString(result);
 
         response.getWriter().write(jsonStr);

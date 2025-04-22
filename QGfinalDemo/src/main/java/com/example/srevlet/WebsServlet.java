@@ -12,10 +12,12 @@ import com.example.service.AdminService;
 import com.example.service.LogService;
 import com.example.service.SessionService;
 import com.example.service.UserService;
+import com.example.util.CheckCodeUtil;
 import com.example.util.IpUtils;
 import com.example.util.TimeUtil;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
@@ -242,16 +244,15 @@ public class WebsServlet extends BaseServlet {
         account.setRole(role);
         UserService userService=new UserService();
 
-//        HttpSession session=request.getSession();
-//        String checkCodeGen = (String) session.getAttribute("checkCodeGen");
-//        System.out.println(checkCodeGen);
+        HttpSession session=request.getSession();
+        String checkCodeGen = (String) session.getAttribute("checkCodeGen");
 
 
 
         Result result =null;
-//        if(checkCodeGen==null||!(checkCodeGen.equals(checkcode))){
-//            result=Result.error(ResultCodeEnum.CHECK_CODE_ERROR);
-//        }else{
+        if(checkCodeGen==null||!(checkCodeGen.equals(checkcode))){
+            result=Result.error(ResultCodeEnum.CHECK_CODE_ERROR);
+        }else{
             if("ADMIN".equals(role)){
                 AdminService adminService=new AdminService();
                 if(adminService.register(account)!=0)result=Result.success(account);
@@ -262,7 +263,7 @@ public class WebsServlet extends BaseServlet {
             }else{
                 result=Result.error();
             }
-    //    }
+        }
 
         if("200".equals(result.getCode())){
             LogService logService=new LogService();
@@ -270,19 +271,30 @@ public class WebsServlet extends BaseServlet {
 
             if("USER".equals(role)){
                 account = userService.selectSingle(account);
-                Session session = new Session();
-                session.setHeadId(1);
-                session.setHeadRole("SYSTEM");
-                session.setHindId(account.getId());
-                session.setHindRole(account.getRole());
-                session.setSessionTime(TimeUtil.getTime());
+                Session sess = new Session();
+                sess.setHeadId(1);
+                sess.setHeadRole("SYSTEM");
+                sess.setHindId(account.getId());
+                sess.setHindRole(account.getRole());
+                sess.setSessionTime(TimeUtil.getTime());
                 SessionService sessionService=new SessionService();
-                sessionService.add(session);
+                sessionService.add(sess);
             }
 
         }
         String jsonStr= JSON.toJSONString(result);
 
         response.getWriter().write(jsonStr);
+    }
+    public void CheckCode(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        ServletOutputStream os=response.getOutputStream();
+        try {
+            String checkCode = CheckCodeUtil.outputVerifyImage(80, 35, os, 4);
+            HttpSession session = request.getSession();
+            System.out.println("Original_C:"+checkCode);
+            session.setAttribute("checkCodeGen", checkCode);
+        } finally {
+            os.close(); // 确保关闭输出流
+        }
     }
 }

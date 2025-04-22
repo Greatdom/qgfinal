@@ -38,7 +38,7 @@
             <strong>验证码:</strong>
             <label for="CheckCode"></label>
             <input id="CheckCode" type="text" placeholder="验证码" v-model="CheckCode" style="width:40%;display: inline-block">
-            <img  id="CheckCodeImage" src="http://localhost:8080/QGfinalDemo_war/CheckCodeServlet">
+            <img style="width:80px;height:35px" id="CheckCodeImage" src="http://localhost:8080/QGfinalDemo_war/WebsServlet?method=CheckCode">
             <strong @click="CheckCodeMethod">看不清?</strong>
         </div>
 
@@ -72,7 +72,7 @@
             },
             CheckCodeMethod(){
                 const checkCodeImg = document.querySelector("#CheckCodeImage");
-                checkCodeImg.src = "http://localhost:8080/QGfinalDemo_war/CheckCodeServlet?" + new Date().getTime();
+                checkCodeImg.src = "http://localhost:8080/QGfinalDemo_war/WebsServlet?method=CheckCode&" + new Date().getTime();
             },
             Register(){
 

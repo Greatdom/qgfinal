@@ -57,4 +57,7 @@ public class DealService {
     public Deal selectById(int id){
         return dealMapper.selectById(id);
     }
+    public int ChangeDealStatus(Deal deal){
+        return dealMapper.ChangeDealStatus(deal);
+    }
 }

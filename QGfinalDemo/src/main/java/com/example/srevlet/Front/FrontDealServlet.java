@@ -4,12 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.example.common.Result;
 import com.example.common.enums.DealStatusEnum;
 import com.example.common.enums.ResultCodeEnum;
-import com.example.entity.Comments;
-import com.example.entity.Deal;
-import com.example.entity.Product;
-import com.example.service.CommentsService;
-import com.example.service.DealService;
-import com.example.service.ProductService;
+import com.example.entity.*;
+import com.example.service.*;
 import com.example.srevlet.BaseServlet;
 import com.example.util.TimeUtil;
 
@@ -23,6 +19,47 @@ import java.util.List;
 @WebServlet("/Front/Deal")
 public class FrontDealServlet extends BaseServlet {
 
+    public void SaveAddReport(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String reportType=request.getParameter("reportType");
+        String content=request.getParameter("content");
+        Integer userId=Integer.valueOf(request.getParameter("userId"));
+        Integer pointerId=Integer.valueOf(request.getParameter("pointerId"));
+        Result result =null;
+        ReportService reportService=new ReportService();
+        SentenceService sentenceService=new SentenceService();
+        Report report=new Report();
+        report.setReportType(reportType);
+        report.setContent(content);
+        report.setUserId(userId);
+        report.setPointerId(pointerId);
+        report.setResult("待处理");
+        report.setReportTime(TimeUtil.getTime());
+        Sentence sentence=new Sentence();
+        sentence.setUserId(userId);
+        sentence.setUserRole("USER");
+        sentence.setSentenceTime(TimeUtil.getTime());
+        sentence.setContent(content);
+
+        Session session=null;
+        {
+            Account acc1=new Account();
+            Account acc2=new Account();
+            acc1.setId(userId);
+            acc1.setRole("USER");
+            acc2.setId(1);
+            acc2.setRole("SYSTEM");
+            SessionService sessionService=new SessionService();
+            session = sessionService.selectSingle(acc1, acc2);
+            sentence.setSessionId(session.getId());
+        }
+        if(reportService.add(report)>0&&sentenceService.add(sentence)>0){
+            result=Result.success();
+        }else{
+            result=Result.error();
+        }
+        String jsonStr= JSON.toJSONString(result);
+        response.getWriter().write(jsonStr);
+    }
 
     public void SaveDeleteComment(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Integer id=Integer.valueOf(request.getParameter("id"));

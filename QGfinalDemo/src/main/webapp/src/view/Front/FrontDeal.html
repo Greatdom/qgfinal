@@ -50,7 +50,7 @@
             </div>
             <div>
                 <strong v-show="FocusDeal">举报订单</strong><br>
-                <button v-show="FocusDeal" class="updateButton"><strong>举报</strong></button>
+                <button v-show="FocusDeal" class="updateButton" @click="ShowAddReportForm"><strong>举报</strong></button>
                 <strong v-show="!FocusDeal">没有焦点无法举报订单</strong><br>
                 <button v-show="!FocusDeal" class="noneUpdateButton">举报</button>
             </div>
@@ -145,7 +145,30 @@
             </div>
         </div>
     </div>
+<!--    举报-->
+    <div v-show="AddReportForm" class="HoldForm">
+        <div class="form">
+            <h2 style="display:block;width:100%;text-align:center;padding:10px 0;">进行举报</h2>
 
+            <div class="inputText" style="margin-bottom:8px">
+                <strong style="margin:0 8px">举报种类:</strong>
+                <select v-model="ReportType">
+                    <option value="商品">请求下架商品</option>
+                    <option value="用户">请求封禁商家</option>
+                </select>
+            </div>
+            <div class="inputText">
+                <strong style="margin:0 8px">具体举报内容:</strong><textarea v-model="ReportContent" style="resize: none;" cols="30" rows="3"></textarea>
+            </div>
+
+            <div>
+                <button @click="ShowAddReportForm" class="formButton" style="background-color:darkorange;color: aliceblue">取消</button>
+            </div>
+            <div>
+                <button @click="SaveAddReport" class="formButton" style="background-color: darkgreen;color:aliceblue">确认</button>
+            </div>
+        </div>
+    </div>
 
 </div>
 
@@ -153,6 +176,11 @@
     new Vue({
         el: '#app',
         data: {
+
+            //AddReport
+            ReportType:"商品",
+            ReportContent:"",
+
 
             //AddComment
             AddCommentScore:0,
@@ -165,15 +193,51 @@
             FocusComment:null,
             AddCommentForm:false,
             DeleteCommentForm:false,
+            AddReportForm:false,
         },
         mounted() {
             this.LoadAccount();
         },
         methods:{
-
+            SaveAddReport(){
+                const contentRegex = /^[^\s]{1,100}$/;
+                if(this.ReportContent==null||!contentRegex.test(this.ReportContent)){
+                    alert("请输入1~100字的举报内容");
+                    this.ShowAddReportForm();
+                    return;
+                }
+                let CounterPart;
+                if(this.ReportType==="商品"){
+                    CounterPart=this.FocusProduct.id;
+                    this.ReportContent="我请求下架商品[ ID: "+CounterPart+" ]: "+this.ReportContent;
+                }else{
+                    CounterPart=this.FocusProduct.userId;
+                    this.ReportContent="我请求封禁用户[ ID: "+CounterPart+" ]: "+this.ReportContent;
+                }
+                let requestBody;
+                requestBody = "reportType=" + encodeURIComponent(this.ReportType)
+                    + "&content=" + encodeURIComponent(this.ReportContent)
+                    + "&userId=" + encodeURIComponent(this.currentUser.id)
+                    + "&pointerId=" + encodeURIComponent(CounterPart)
+                    + "&method=SaveAddReport";
+                let UpdateHttp;
+                if(window.XMLHttpRequest){
+                    UpdateHttp=new XMLHttpRequest();
+                }else{
+                    UpdateHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                UpdateHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Front/Deal");
+                UpdateHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                UpdateHttp.send(requestBody);
+                UpdateHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        let result = JSON.parse(event.target.responseText);
+                        alert(result.msg);
+                        this.ShowAddReportForm();
+                    }
+                }
+            },
             SaveDeleteComment(){
-
-
                 let requestBody;
                 requestBody = "id=" + encodeURIComponent(this.FocusComment.id)
                     + "&method=SaveDeleteComment";
@@ -363,6 +427,10 @@
             },
             ShowDeleteCommentForm(){
                 this.DeleteCommentForm=!this.DeleteCommentForm;
+            },
+            ShowAddReportForm(){
+                this.AddReportForm=!this.AddReportForm;
+                this.ReportContent="";
             }
         }
     });

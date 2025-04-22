@@ -96,8 +96,8 @@
                 <h2>WebSocket Chat</h2>
                 <input v-model="newMessage" @keyup.enter="sendMessage" placeholder="Type a message...">
                 <div>
-                    <button v-show="FocusSession" class="updateButton" @click="sendMessage"><strong>发送</strong></button>
-                    <button v-show="!FocusSession" class="noneUpdateButton">发送</button>
+                    <button v-if="FocusSession&&(FocusSession.headRole!=='SYSTEM'&&FocusSession.hindRole!=='SYSTEM')" class="updateButton" @click="sendMessage"><strong>发送</strong></button>
+                    <button v-else class="noneUpdateButton">发送</button>
                 </div>
             </div>
         </div>

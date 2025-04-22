@@ -11,7 +11,7 @@
  Target Server Version : 80040 (8.0.40)
  File Encoding         : 65001
 
- Date: 16/04/2025 09:05:36
+ Date: 22/04/2025 11:58:55
 */
 
 SET NAMES utf8mb4;
@@ -37,7 +37,7 @@ CREATE TABLE `admin`  (
 -- ----------------------------
 -- Records of admin
 -- ----------------------------
-INSERT INTO `admin` VALUES (1, '管理员', 'admin', 'admin', '13433384487', '778005729@qq.com', NULL, '正常', 'ADMIN');
+INSERT INTO `admin` VALUES (1, '第一个管理员', 'admin', 'admin', '13433384487', '778005729@qq.com', '', '正常', 'ADMIN');
 
 -- ----------------------------
 -- Table structure for comments
@@ -57,7 +57,7 @@ CREATE TABLE `comments`  (
 -- ----------------------------
 -- Records of comments
 -- ----------------------------
-INSERT INTO `comments` VALUES (1, 1, '2025-04-16T09:05', 'HHH', 1);
+INSERT INTO `comments` VALUES (1, 0, '2025-04-22T11:56', '坑人', 1);
 
 -- ----------------------------
 -- Table structure for deal
@@ -81,7 +81,7 @@ CREATE TABLE `deal`  (
 -- ----------------------------
 -- Records of deal
 -- ----------------------------
-INSERT INTO `deal` VALUES (1, '货到付款', '待发货', '2025-04-16T09:03', 1, 1, 1);
+INSERT INTO `deal` VALUES (1, '即买即付', '待发货', '2025-04-22T11:56', 2, 1, 1);
 
 -- ----------------------------
 -- Table structure for log
@@ -95,12 +95,27 @@ CREATE TABLE `log`  (
   `ip` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT 'IP',
   `operate_time` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '操作时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '日志' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '日志' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of log
 -- ----------------------------
-INSERT INTO `log` VALUES (1, 'admin注册了', '注册', 'admin', '127.0.0.1', '2025-04-16T09:03');
+INSERT INTO `log` VALUES (1, '注册成功', '注册', 'admin', '127.0.0.1', '2025-04-22T11:44');
+INSERT INTO `log` VALUES (2, '注册成功', '注册', 'user', '127.0.0.1', '2025-04-22T11:45');
+INSERT INTO `log` VALUES (3, '登录成功', '登录', 'user', '127.0.0.1', '2025-04-22T11:49');
+INSERT INTO `log` VALUES (4, '发布商品成功', '发布商品', 'user', '127.0.0.1', '2025-04-22T11:50');
+INSERT INTO `log` VALUES (5, '更新账户成功', '修改账户', 'user', '127.0.0.1', '2025-04-22T11:50');
+INSERT INTO `log` VALUES (6, '登录成功', '登录', 'user', '127.0.0.1', '2025-04-22T11:51');
+INSERT INTO `log` VALUES (7, '登录成功', '登录', 'user', '127.0.0.1', '2025-04-22T11:51');
+INSERT INTO `log` VALUES (8, '登录成功', '登录', 'admin', '127.0.0.1', '2025-04-22T11:51');
+INSERT INTO `log` VALUES (9, '更新账户成功', '修改账户', 'admin', '127.0.0.1', '2025-04-22T11:52');
+INSERT INTO `log` VALUES (10, '登录成功', '登录', 'user', '127.0.0.1', '2025-04-22T11:52');
+INSERT INTO `log` VALUES (11, '注册成功', '注册', 'user2', '127.0.0.1', '2025-04-22T11:53');
+INSERT INTO `log` VALUES (12, '登录成功', '登录', 'user2', '127.0.0.1', '2025-04-22T11:53');
+INSERT INTO `log` VALUES (13, '更新账户成功', '修改账户', 'user2', '127.0.0.1', '2025-04-22T11:54');
+INSERT INTO `log` VALUES (14, '登录成功', '登录', 'user2', '127.0.0.1', '2025-04-22T11:54');
+INSERT INTO `log` VALUES (15, '购买商品成功', '购买商品', 'user2', '127.0.0.1', '2025-04-22T11:56');
+INSERT INTO `log` VALUES (16, '登录成功', '登录', 'admin', '127.0.0.1', '2025-04-22T11:58');
 
 -- ----------------------------
 -- Table structure for product
@@ -127,7 +142,7 @@ CREATE TABLE `product`  (
 -- ----------------------------
 -- Records of product
 -- ----------------------------
-INSERT INTO `product` VALUES (1, '好人卡', '这是好人卡，为小丑准备的', 55.50, 12, '文具', NULL, '2025-04-16T09:02', '已发布', 1, 0, 0);
+INSERT INTO `product` VALUES (1, '好人是怎么炼成的', '又名《小丑是怎么炼成的》', 10.00, 9, '书籍', '', '2025-04-22T11:50', '已发布', 1, 1, 1);
 
 -- ----------------------------
 -- Table structure for report
@@ -147,7 +162,7 @@ CREATE TABLE `report`  (
 -- ----------------------------
 -- Records of report
 -- ----------------------------
-INSERT INTO `report` VALUES (1, '2025-04-16T09:03', '举报商家', '他老是发好人卡我受不了了,快BAN掉他!', '待处理', 1, 1);
+INSERT INTO `report` VALUES (1, '2025-04-22T11:57', '用户', '我请求封禁用户[ ID: 1 ]: 这个人我看着就不爽', '待处理', 2, 1);
 
 -- ----------------------------
 -- Table structure for sentence
@@ -161,12 +176,16 @@ CREATE TABLE `sentence`  (
   `user_role` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '聊天者角色',
   `session_id` int NULL DEFAULT NULL COMMENT '隶属会话',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '私聊语句' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '私聊语句' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sentence
 -- ----------------------------
-INSERT INTO `sentence` VALUES (1, '2025-04-16T09:04', '我就是想发好人卡怎么了？！', 1, 'ADMIN', 1);
+INSERT INTO `sentence` VALUES (1, '2025-04-22T11:45', '我向你发起了会话~', 1, 'SYSTEM', 1);
+INSERT INTO `sentence` VALUES (2, '2025-04-22T11:53', '我向你发起了会话~', 1, 'SYSTEM', 2);
+INSERT INTO `sentence` VALUES (3, '2025-04-22T11:54', '我向你发起了会话~', 2, 'USER', 3);
+INSERT INTO `sentence` VALUES (4, '2025-04-22T11:56', '看着作者面子上我买了', 2, 'USER', 3);
+INSERT INTO `sentence` VALUES (5, '2025-04-22T11:57', '我请求封禁用户[ ID: 1 ]: 这个人我看着就不爽', 2, 'USER', 2);
 
 -- ----------------------------
 -- Table structure for session
@@ -180,12 +199,14 @@ CREATE TABLE `session`  (
   `hind_id` int NULL DEFAULT NULL COMMENT '后发消息的人',
   `hind_role` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '后手角色',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '私聊记录' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '私聊记录' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of session
 -- ----------------------------
-INSERT INTO `session` VALUES (1, '2025-04-16T09:04', 1, 'ADMIN', 1, 'USER');
+INSERT INTO `session` VALUES (1, '2025-04-22T11:45', 1, 'SYSTEM', 1, 'USER');
+INSERT INTO `session` VALUES (2, '2025-04-22T11:53', 1, 'SYSTEM', 2, 'USER');
+INSERT INTO `session` VALUES (3, '2025-04-22T11:54', 2, 'USER', 1, 'USER');
 
 -- ----------------------------
 -- Table structure for systeminfo
@@ -208,7 +229,7 @@ CREATE TABLE `systeminfo`  (
 -- ----------------------------
 -- Records of systeminfo
 -- ----------------------------
-INSERT INTO `systeminfo` VALUES (1, 'SYSTEM', 1, 1, 1, 0.00000000, 1, 1, 1, 1);
+INSERT INTO `systeminfo` VALUES (1, 'SYSTEM', 1, 2, 1, 0.00100000, 1, 3, 1, 1);
 
 -- ----------------------------
 -- Table structure for user
@@ -228,11 +249,12 @@ CREATE TABLE `user`  (
   `pay_password` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '支付密码',
   `popularity` int NULL DEFAULT 0 COMMENT '流量',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户个人信息' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户个人信息' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES (1, '用户', 'user', '123456', '12345678', 'user.gmail.com', NULL, 'USER', 0, '正常', '234456', 0);
+INSERT INTO `user` VALUES (1, '第一个用户', 'user', 'user', '13433384487', '778005729@qq.com', '', 'USER', 0, '正常', '123456', 0);
+INSERT INTO `user` VALUES (2, '第二个用户', 'user2', 'user2', '13415123554', '778005729@outlook.com', '', 'USER', 1, '正常', '123456', 1);
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -20,7 +20,6 @@ import java.util.List;
 
 @WebServlet("/Manager/Log")
 public class ManagerLogServlet extends BaseServlet {
-
     public void LoadLog(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String selectWord = request.getParameter("selectWord");
         LogService logService = new LogService();
@@ -39,7 +38,4 @@ public class ManagerLogServlet extends BaseServlet {
         String jsonStr= JSON.toJSONString(result);
         response.getWriter().write(jsonStr);
     }
-
-
-
 }

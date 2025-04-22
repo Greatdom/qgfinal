@@ -2,6 +2,7 @@ package com.example.srevlet;
 
 import com.alibaba.fastjson.JSON;
 import com.example.common.Result;
+import com.example.common.enums.AccountStatusEnum;
 import com.example.common.enums.LogsTypeEnum;
 import com.example.common.enums.ResultCodeEnum;
 import com.example.entity.Account;
@@ -14,6 +15,7 @@ import com.example.service.SessionService;
 import com.example.service.UserService;
 import com.example.util.CheckCodeUtil;
 import com.example.util.IpUtils;
+import com.example.util.SendEmailUtil;
 import com.example.util.TimeUtil;
 
 import javax.servlet.ServletException;
@@ -187,8 +189,11 @@ public class WebsServlet extends BaseServlet {
         }else if("USER".equals(role)){
             UserService userService=new UserService();
             account=userService.login(account);
-            if(account!=null)result=Result.success(account);
-            else result=Result.error(ResultCodeEnum.USER_ACCOUNT_ERROR);
+            if(account!=null&&account.getStatus().equals(AccountStatusEnum.NORMAL.getValue()))result=Result.success(account);
+            else if(account==null)
+                result=Result.error(ResultCodeEnum.USER_ACCOUNT_ERROR);
+            else result=Result.error(ResultCodeEnum.BAN_ERROR);
+
         }else result=Result.error();
         //如果result成功而且remember就加Cookie
         //登录成功后将用户加进session作为登录凭证
@@ -297,4 +302,22 @@ public class WebsServlet extends BaseServlet {
             os.close(); // 确保关闭输出流
         }
     }
+    public void SendEmail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 获取用户输入的邮箱地址
+        String email = request.getParameter("email");
+        SendEmailUtil sendEmailUtil=new SendEmailUtil();
+        // 生成验证码
+        String verificationCode = sendEmailUtil.generateVerificationCode();
+
+        // 发送邮件
+        boolean isSent = sendEmailUtil.sendEmail(email, verificationCode);
+
+        if (isSent) {
+            response.getWriter().write("验证码已发送到您的邮箱: " + email);
+        } else {
+            response.getWriter().write("发送验证码失败，请稍后再试");
+        }
+    }
 }
+
+

@@ -1,5 +1,6 @@
 package com.example.mapper;
 
+import com.example.common.enums.AccountStatusEnum;
 import com.example.entity.Account;
 import com.example.util.CRUDUtils;
 
@@ -8,7 +9,7 @@ import java.util.List;
 public class AdminMapper {
     public int insert(String username, String password) {
         String insertSql = "INSERT INTO admin (username,password,status) VALUES (?, ? ,?)";
-        return CRUDUtils.insert(insertSql, username, password,"正常");
+        return CRUDUtils.insert(insertSql, username, password, AccountStatusEnum.NORMAL.getValue());
     }
     public Account selectSingle(Account account) {
         String username = account.getUsername();

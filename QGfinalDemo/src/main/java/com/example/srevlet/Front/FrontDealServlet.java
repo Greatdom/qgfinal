@@ -34,25 +34,7 @@ public class FrontDealServlet extends BaseServlet {
         report.setPointerId(pointerId);
         report.setResult("待处理");
         report.setReportTime(TimeUtil.getTime());
-        Sentence sentence=new Sentence();
-        sentence.setUserId(userId);
-        sentence.setUserRole("USER");
-        sentence.setSentenceTime(TimeUtil.getTime());
-        sentence.setContent(content);
-
-        Session session=null;
-        {
-            Account acc1=new Account();
-            Account acc2=new Account();
-            acc1.setId(userId);
-            acc1.setRole("USER");
-            acc2.setId(1);
-            acc2.setRole("SYSTEM");
-            SessionService sessionService=new SessionService();
-            session = sessionService.selectSingle(acc1, acc2);
-            sentence.setSessionId(session.getId());
-        }
-        if(reportService.add(report)>0&&sentenceService.add(sentence)>0){
+        if(reportService.add(report)>0&&sentenceService.addUserToSystem(userId,content)>0){
             result=Result.success();
         }else{
             result=Result.error();

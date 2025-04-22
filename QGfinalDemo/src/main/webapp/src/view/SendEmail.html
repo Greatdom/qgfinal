@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="../js/vue.js"></script>
+    <link rel="stylesheet" href="../asset/css/global.css">
+    <title>用邮箱找回密码</title>
+</head>
+<body style=" background-color: blanchedalmond;
+    background-image: url(../asset/img/registerbg.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;">
+<div id="app">
+    <div class="form">
+
+        <h2 style="display:block;width:100%;text-align:center;padding:10px 0;">用邮箱找回密码</h2>
+        <div class="formInputText">
+            <input type="text" placeholder="请输入邮箱来获得验证码" v-model="Email">
+        </div>
+
+        <div style="text-align: end"><p @click="SendEmail"><strong>获取验证码</strong></p></div>
+
+        <div class="formSelect">
+            <strong>角色:</strong>
+            <label>
+                <input type="radio" value="ADMIN" v-model="Role" >管理员
+                <input type="radio" value="USER" v-model="Role" >用户
+            </label>
+        </div>
+
+        <div class="formInputText">
+            <input type="password" placeholder="请输入新密码" v-model="NewPassword">
+        </div>
+
+
+        <div style="text-align: end"><p @click="TurnToLogin"><strong>返回登录</strong></p></div>
+        <div>
+            <button class="formButton" @click="Save">确认更改密码</button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    const app=new Vue({
+        el:'#app',
+        data:{
+            Email:"",
+            Role:"USER",
+            EmailCode:"",
+            NewPassword:"",
+        },
+        mounted(){
+
+        },
+        methods: {
+            Save(){
+
+            },
+            SendEmail(){
+                this.Email=this.Email.trim();
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                if(!emailRegex.test(this.Email)){
+                    alert("请输入合法的邮箱地址");
+                    return;
+                }
+                let requestBody;
+                requestBody = "email=" + encodeURIComponent(this.Email)
+                    + "&method=SendEmail";
+                let UpdateHttp;
+                if(window.XMLHttpRequest){
+                    UpdateHttp=new XMLHttpRequest();
+                }else{
+                    UpdateHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                UpdateHttp.open("POST","http://localhost:8080/QGfinalDemo_war/WebsServlet");
+                UpdateHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                UpdateHttp.send(requestBody);
+                UpdateHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        let result = JSON.parse(event.target.responseText);
+                        alert(result);
+                    }
+                }
+            },
+            TurnToLogin(){
+
+            }
+        }
+    })
+
+</script>
+
+</body>
+</html>

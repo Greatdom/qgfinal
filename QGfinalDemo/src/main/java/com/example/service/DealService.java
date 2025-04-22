@@ -1,9 +1,6 @@
 package com.example.service;
 
-import com.example.entity.Account;
-import com.example.entity.Deal;
-import com.example.entity.Product;
-import com.example.entity.Systeminfo;
+import com.example.entity.*;
 import com.example.mapper.DealMapper;
 import com.example.mapper.ProductMapper;
 import com.example.mapper.SysteminfoMapper;
@@ -40,6 +37,11 @@ public class DealService {
                 dbaccount.setId(deal.getUserId());
                 dbaccount = userMapper.selectSingle(dbaccount);
                 count = productMapper.whileDealing(dbProduct,dbaccount);
+                if(count>0){
+                    SentenceService sentenceService = new SentenceService();
+                    String content="谢谢惠顾于["+deal.getDealTime()+"]购买商品["+product.getName()+"]";
+                    count = sentenceService.addSystemToUser(deal.getUserId(),content);
+                }
             }
             return count;
         }

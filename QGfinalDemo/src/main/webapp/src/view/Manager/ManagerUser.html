@@ -31,6 +31,54 @@
     </div>
     <div class="right">
 
+        <div class="HeaderList"
+             style="display: flex;justify-content: space-between;height:15%;width:98%;background-color: cornflowerblue">
+            <div>
+                <p style="font-size: 12px"><strong>正在焦点的用户</strong>：{{FocusUser? FocusUser.id:"无焦点"}}</p>
+            </div>
+            <div>
+                <button v-if="FocusUser" class="updateButton"><strong>封禁用户</strong></button>
+                <button v-else class="noneUpdateButton">封禁用户</button>
+            </div>
+            <div>
+                <button v-if="FocusUser" class="updateButton"><strong>解封用户</strong></button>
+                <button v-else class="noneUpdateButton">解封用户</button>
+            </div>
+        </div>
+
+
+        <div class="LeftList" style="display: inline-block;width:70%;height: 80%">
+            <table>
+                <thead style="display:block;width:100%;height: 10%">
+                <tr style="background-color: cadetblue">
+                    <td><strong>ID</strong></td>
+                    <td><strong>账号</strong></td>
+                    <td><strong>昵称</strong></td>
+                    <td><strong>邮箱</strong></td>
+                    <td><strong>电话</strong></td>
+                    <td><strong>信誉</strong></td>
+                    <td><strong>流量</strong></td>
+                    <td><strong>状态</strong></td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-show="!userTable" class="NONE">
+                    <td><strong>无数据!</strong></td>
+                </tr>
+                <tr v-for="user in userTable" :key="user.id">
+                    <td>{{ user?.id||'无ID数据'}}</td>
+                    <td>{{ user?.username||'无ID数据'}}</td>
+                    <td>{{ user?.name||'无ID数据'}}</td>
+                    <td>{{ user?.email||'无ID数据'}}</td>
+                    <td>{{ user?.phone||'无ID数据'}}</td>
+                    <td>{{ user?.reputation||'无ID数据'}}</td>
+                    <td>{{ user?.popularity||'无ID数据'}}</td>
+                    <td>{{ user?.status||'无ID数据'}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
     </div>
 
 
@@ -41,11 +89,37 @@
         el: '#app',
         data: {
             currentUser: null,
+            userTable:null,
+            FocusUser:null,
         },
         mounted() {
             this.LoadAccount();
         },
         methods:{
+            LoadUser(){
+                let LoadHttp;
+                if(window.XMLHttpRequest){
+                    LoadHttp=new XMLHttpRequest();
+
+                }else{
+                    LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Manager/User");
+                LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+                let requestBody ="&method=LoadUser";
+                LoadHttp.send(requestBody);
+                LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        const storedUser=JSON.parse(event.target.responseText);
+                        if (storedUser) {
+                            this.userTable = storedUser.data;
+                        } else {
+                            console.log("未找到用户数据");
+                        }
+                    }
+                }
+            },
             LoadAccount(){
                 let LoginHttp;
                 if(window.XMLHttpRequest){
@@ -66,6 +140,7 @@
 
                         if (storedUser) {
                             this.currentUser = storedUser.data;
+                            this.LoadUser();
                             console.log("当前用户：", this.currentUser);
 
                         } else {

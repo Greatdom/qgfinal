@@ -31,6 +31,11 @@ public class CommentsService {
             dbaccount.setId(dbProduct.getUserId());
             dbaccount = userMapper.selectSingle(dbaccount);
             count = productMapper.whileCommenting(dbProduct,comments,dbaccount);
+            if(count>0){
+                SentenceService sentenceService = new SentenceService();
+                String content="您于["+comments.getCommentTime()+"]进行评价["+ comments.getContent()+"]";
+                count = sentenceService.addSystemToUser(dbDeal.getUserId(),content);
+            }
         }
         return count;
     }

@@ -2,6 +2,7 @@ package com.example.srevlet.Manager;
 
 import com.alibaba.fastjson.JSON;
 import com.example.common.Result;
+import com.example.common.enums.ResultCodeEnum;
 import com.example.entity.Account;
 import com.example.entity.Log;
 import com.example.service.LogService;
@@ -25,6 +26,27 @@ public class ManagerUserServlet extends BaseServlet {
             result=Result.success(users);
         }else{
             result=Result.error();
+        }
+        String jsonStr= JSON.toJSONString(result);
+        response.getWriter().write(jsonStr);
+    }
+    public void ChangeUserStatus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Integer id=Integer.valueOf(request.getParameter("id"));
+        String status=request.getParameter("status");
+        UserService userService = new UserService();
+        Account account=new Account();
+        account.setId(id);
+        account = userService.selectSingle(account);
+        Result result=null;
+        if(account!=null){
+            account.setStatus(status);
+            if(userService.ChangeStatus(account)>0){
+                result=Result.success();
+            }else{
+                result=Result.error();
+            }
+        }else{
+            result=Result.error(ResultCodeEnum.USER_NOT_EXIST_ERROR);
         }
         String jsonStr= JSON.toJSONString(result);
         response.getWriter().write(jsonStr);

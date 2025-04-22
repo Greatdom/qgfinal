@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>后台-所有用户</title>
+    <title>后台-个人信息</title>
     <script src="../../js/vue.js"></script>
     <link rel="stylesheet" href="../../asset/css/global.css">
 </head>
@@ -15,7 +15,7 @@
             <strong style="position:absolute;left:60px;bottom:20px">二手市场</strong>
         </a>
 
-        <h2 style="position: absolute;left:250px;top:14px;color:whitesmoke">后台 > 所有用户信息</h2>
+        <h2 style="position: absolute;left:250px;top:14px;color:whitesmoke">后台 > 个人信息</h2>
 
         <button @click="logout"><strong>{{ currentUser? '退出登录':'进入登录' }}</strong></button>
 
@@ -23,69 +23,57 @@
 
     <div class="left">
         <a href="ManagerHome.html"><strong>查看修改个人信息</strong></a>
-        <a href="ManagerUser.html" style="border-right: darkcyan solid 5px"><strong>所有用户信息</strong></a>
+        <a href="ManagerUser.html"><strong>所有用户信息</strong></a>
         <a href="ManagerProduct.html"><strong>所有商品信息</strong></a>
-        <a href="ManagerReport.html"><strong>所有举报信息</strong></a>
+        <a href="ManagerReport.html" style="border-right: darkcyan solid 5px"><strong>所有举报信息</strong></a>
         <a href="ManagerLog.html"><strong>所有日志信息</strong></a>
         <a href="ManagerSystem.html"><strong>系统数据记录</strong></a>
-
     </div>
     <div class="right">
+
 
         <div class="HeaderList"
              style="display: flex;justify-content: space-between;height:15%;width:98%;background-color: cornflowerblue">
             <div>
-                <p style="font-size: 12px"><strong>正在焦点的用户</strong>：{{FocusUser? FocusUser.id:"无焦点"}}</p>
+                <p style="font-size: 12px"><strong>正在焦点的举报</strong>：{{FocusReport? FocusReport.id:"无焦点"}}</p>
             </div>
-            <div style="height:100%;width:30%;background-color: blueviolet;border:black 3px solid">
-                <div style="display: flex;height:20%;width:100%;justify-content: center;">
-                    <h3>用户封禁</h3>
-                </div>
-                <div style="display: flex; justify-content: center; align-items: center;height:80%;width:100%;">
-                    <button v-if="FocusUser&&FocusUser.status==='正常'" class="updateButton" @click="ChangeUserStatus(1)"><strong>封禁用户</strong></button>
-                    <button v-else class="noneUpdateButton">封禁用户</button>
-                    <button v-if="FocusUser&&FocusUser.status==='被封禁'" class="updateButton" @click="ChangeUserStatus(2)"><strong>解封用户</strong></button>
-                    <button v-else class="noneUpdateButton">解封用户</button>
-                </div>
+            <div>
+                <strong>对该举报进行处理</strong><br>
+                <button v-if="FocusReport" class="updateButton"><strong>批准</strong></button>
+                <button v-else class="noneUpdateButton">批准</button>
+                <button v-if="FocusReport" class="updateButton"><strong>反对</strong></button>
+                <button v-else class="noneUpdateButton">反对</button>
+            </div>
+            <div>
+                <strong>查看这个举报</strong><br>
+                <button v-if="FocusReport" class="updateButton"><strong>查看</strong></button>
+                <button v-else class="noneUpdateButton">查看</button>
             </div>
         </div>
-
 
         <div class="LeftList" style="display: inline-block;width:70%;height: 80%">
             <table>
                 <thead style="display:block;width:100%;height: 10%">
                 <tr style="background-color: cadetblue">
                     <td><strong>ID</strong></td>
-                    <td><strong>账号</strong></td>
-                    <td><strong>昵称</strong></td>
-                    <td><strong>邮箱</strong></td>
-                    <td><strong>电话</strong></td>
-                    <td><strong>信誉</strong></td>
-                    <td><strong>流量</strong></td>
-                    <td><strong>状态</strong></td>
+                    <td><strong>举报时间</strong></td>
+                    <td><strong>举报结果</strong></td>
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-show="!userTable" class="NONE">
+                <tr v-show="!ReportTable" class="NONE">
                     <td><strong>无数据!</strong></td>
                 </tr>
-                <tr v-for="user in userTable" :key="user.id" @click="FocusUser=user">
-                    <td>{{ user?.id||'无ID数据'}}</td>
-                    <td>{{ user?.username||'无账号数据'}}</td>
-                    <td>{{ user?.name||'无昵称数据'}}</td>
-                    <td>{{ user?.email||'无邮箱数据'}}</td>
-                    <td>{{ user?.phone||'无电话数据'}}</td>
-                    <td>{{ user?.reputation??'无名誉数据'}}</td>
-                    <td>{{ user?.popularity??'无流量数据'}}</td>
-                    <td>{{ user?.status||'无状态数据'}}</td>
+                <tr v-for="report in ReportTable" :key="report.id" @click="FocusOnRePort(report)">
+                    <td>{{ report?.id||'无ID数据'}}</td>
+                    <td>{{ report?.reportTime||'无时间数据'}}</td>
+                    <td>{{ report?.result||'无结果数据'}}</td>
                 </tr>
                 </tbody>
             </table>
         </div>
 
     </div>
-
-
 </div>
 
 <script>
@@ -93,20 +81,16 @@
         el: '#app',
         data: {
             currentUser: null,
-            userTable:null,
-            FocusUser:null,
+            ReportTable:null,
+            FocusReport:null,
+            FocusCounterPart:null,
         },
         mounted() {
             this.LoadAccount();
         },
         methods:{
-            ChangeUserStatus(num){
-                let status;
-                if(num===1){
-                    status="被封禁";
-                }else{
-                    status="正常";
-                }
+            FocusOnRePort(somebody){
+              this.FocusReport=somebody;
                 let LoadHttp;
                 if(window.XMLHttpRequest){
                     LoadHttp=new XMLHttpRequest();
@@ -114,26 +98,23 @@
                 }else{
                     LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
                 }
-                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Manager/User");
+                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Manager/Report");
                 LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 
-                let requestBody ="status=" + encodeURIComponent(status)
-                    + "&id=" + encodeURIComponent(this.FocusUser.id)
-                    + "&method=ChangeUserStatus";
+                let requestBody ="reportType=" + encodeURIComponent(this.FocusReport.reportType)
+                    +"&pointerId=" + encodeURIComponent(this.FocusReport.pointerId)
+                    +"&method=FocusOnRePort";
                 LoadHttp.send(requestBody);
                 LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
                     if (event.target.readyState === 4 && event.target.status === 200) {
-                        const storedUser=JSON.parse(event.target.responseText);
-                        if (storedUser.code==="200") {
-                            this.LoadUser();
-                            this.FocusUser=null;
+                        const storedReport=JSON.parse(event.target.responseText);
+                        if (storedReport) {
+                            this.FocusCounterPart=storedReport.data;
                         }
-                            alert(storedUser.msg);
-
                     }
                 }
             },
-            LoadUser(){
+            LoadReport(){
                 let LoadHttp;
                 if(window.XMLHttpRequest){
                     LoadHttp=new XMLHttpRequest();
@@ -141,18 +122,16 @@
                 }else{
                     LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
                 }
-                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Manager/User");
+                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Manager/Report");
                 LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 
-                let requestBody ="&method=LoadUser";
+                let requestBody ="&method=LoadReport";
                 LoadHttp.send(requestBody);
                 LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
                     if (event.target.readyState === 4 && event.target.status === 200) {
-                        const storedUser=JSON.parse(event.target.responseText);
-                        if (storedUser) {
-                            this.userTable = storedUser.data;
-                        } else {
-                            console.log("未找到用户数据");
+                        const storedReport=JSON.parse(event.target.responseText);
+                        if (storedReport) {
+                            this.ReportTable=storedReport.data;
                         }
                     }
                 }
@@ -177,11 +156,8 @@
 
                         if (storedUser) {
                             this.currentUser = storedUser.data;
-                            this.LoadUser();
-                            console.log("当前用户：", this.currentUser);
-
+                            this.LoadReport();
                         } else {
-
                             console.log("未找到用户数据");
                         }
 

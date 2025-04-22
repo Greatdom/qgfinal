@@ -66,6 +66,8 @@ public class UserService {
 
     public Account selectSingle(Account account){return userMapper.selectSingle(account);}
 
-
+    public int ChangeStatus(Account account){
+        return userMapper.ChangeStatus(account);
+    }
 
 }

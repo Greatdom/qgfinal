@@ -34,7 +34,7 @@ public class DealService {
                 dbProduct.setId(deal.getProductId());
                 dbProduct = productMapper.selectById(dbProduct);
                 Account dbaccount = new Account();
-                dbaccount.setId(deal.getUserId());
+                dbaccount.setId(dbProduct.getUserId());
                 dbaccount = userMapper.selectSingle(dbaccount);
                 count = productMapper.whileDealing(dbProduct,dbaccount);
                 if(count>0){

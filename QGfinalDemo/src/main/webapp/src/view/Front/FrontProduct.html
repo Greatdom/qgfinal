@@ -223,7 +223,9 @@
             },
             SaveBuyForm(){
                 const numRegex = /^(10|[1-9])$/;
+                const passwordRegex = /^[a-zA-Z0-9_]{4,20}$/;
                 this.PayPassword=this.PayPassword.trim();
+
                 if(this.currentUser==null||this.PayPassword!==this.currentUser.payPassword){
                     alert("付款密码错误!");
                     this.CancelBuyForm();
@@ -232,7 +234,12 @@
                     alert("请输入合适的购买数量");
                     this.CancelBuyForm();
                     return;
+                }else if(!passwordRegex.test(this.currentUser.payPassword)){
+                    alert("未设置合适的支付密码!");
+                    this.CancelBuyForm();
+                    return;
                 }
+
                 let requestBody;
                 requestBody = "payMethod=" + encodeURIComponent(this.PayMethod)
                     + "&productNum=" + encodeURIComponent(this.PayNum)

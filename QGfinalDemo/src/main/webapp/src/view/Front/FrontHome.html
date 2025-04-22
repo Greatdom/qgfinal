@@ -65,7 +65,7 @@
         <strong style="margin:0 8px">新登录密码:</strong><input type="password" placeholder="请输入新密码(选填)" v-model="NewPassword">
       </div>
       <div class="inputText">
-        <strong style="margin:0 8px">新支付密码:</strong><input type="password" placeholder="请输入新支付密码(必填)" v-model="PayPassword">
+        <strong style="margin:0 8px">新支付密码:</strong><input type="password" placeholder="请输入新支付密码(选填)" v-model="PayPassword">
       </div>
       <div class="inputText">
         <strong style="margin:0 8px">新昵称:</strong><input type="text" placeholder="请输入新昵称(必填)" v-model="Name">
@@ -186,7 +186,7 @@
         if(this.currentUser==null||this.OriginalPassword!==this.currentUser.password){
           alert("请输入正确的原密码以校验身份");
           this.Cancel();
-        }else if(this.PayPassword===""||this.PayPassword==null||this.Name===""||this.Email===""||this.Phone===""||this.Name==null||this.Email==null||this.Phone==null){
+        }else if(this.Name===""||this.Email===""||this.Phone===""||this.Name==null||this.Email==null||this.Phone==null){
           alert("请填入必填信息");
           this.Cancel();
         }else{
@@ -198,11 +198,8 @@
           if (!emailRegex.test(this.Email)) {
             alert("新邮箱格式不正确");
             this.Cancel();
-          }else
-          if (!passwordRegex.test(this.PayPassword)) {
-            alert("新支付密码格式不正确");
-            this.Cancel();
-          }else
+          }
+          else
           if (!phoneRegex.test(this.Phone)) {
             alert("新电话格式不正确");
             this.Cancel();
@@ -216,6 +213,12 @@
             }
             let requestBody;
             //更新逻辑
+            if(this.PayPassword==null||this.PayPassword===""){
+              this.PayPassword=this.currentUser.payPassword;
+            }else if (!passwordRegex.test(this.PayPassword)) {
+              alert("新支付密码格式不正确");
+              this.Cancel();
+            }
             if(havePassword===true){
               requestBody = "phone=" + encodeURIComponent(this.Phone)
                       + "&password=" + encodeURIComponent(this.NewPassword)

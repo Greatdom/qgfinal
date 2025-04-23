@@ -206,10 +206,10 @@
             <div class="inputText">
                 <strong style="margin:0 8px">商品描述:</strong><textarea v-model="UpdateDescription" style="resize: none;" cols="30" rows="3"></textarea>
             </div>
-            <div class="inputText">
-                <strong style="margin:0 8px">商品价格:</strong>
-                <input type="number" v-model="UpdatePrice" min="1" max="1000" step="0.01" placeholder="请输入商品价格1~1000元" required>
-            </div>
+<!--            <div class="inputText">-->
+<!--                <strong style="margin:0 8px">商品价格:</strong>-->
+<!--                <input type="number" v-model="UpdatePrice" min="1" max="1000" step="0.01" placeholder="请输入商品价格1~1000元" required>-->
+<!--            </div>-->
             <div class="inputText">
                 <strong style="margin:0 8px">商品库存:</strong>
                 <input type="number" v-model="UpdateStock" min="1" max="100" step="1" placeholder="请输入商品库存1~100件" required>
@@ -253,7 +253,7 @@
 
             //更新商品的data
             UpdateDescription:"",
-            UpdatePrice:null,
+            // UpdatePrice:null,
             UpdateStock:null,
             UpdateCategory:null,
             UpdateAvatar:null,
@@ -346,14 +346,14 @@
             CancelUpdateProductForm(){
                 this.ShowUpdateProductForm();
                 this.UpdateDescription=this.FocusProduct?.description||"";
-                this.UpdatePrice=this.FocusProduct?.price||1;
+                // this.UpdatePrice=this.FocusProduct?.price||1;
                 this.UpdateStock=this.FocusProduct?.stock||1;
                 this.UpdateCategory=this.FocusProduct?.category||"文具";
                 this.UpdateAvatar=this.FocusProduct?.avatar||"";
             },
             SaveUpdateProductForm(){
                 const descriptionRegex = /^[^\s]{1,100}$/;
-                const priceRegex = /^(1000(\.00?)?|[1-9]?[0-9]?[0-9](\.[0-9]{1,2})?)$/;
+                // const priceRegex = /^(1000(\.00?)?|[1-9]?[0-9]?[0-9](\.[0-9]{1,2})?)$/;
                 const stockRegex = /^(100|[1-9]?[0-9])$/;
 
 
@@ -362,7 +362,7 @@
                     alert("请填满必填信息");
                     this.CancelUpdateProductForm();
                     return;
-                }else if(!descriptionRegex.test(this.UpdateDescription)||!priceRegex.test(this.UpdatePrice)||!stockRegex.test(this.UpdateStock)){
+                }else if(!descriptionRegex.test(this.UpdateDescription)||!stockRegex.test(this.UpdateStock)){
                     alert("填入信息不符合规范");
                     this.CancelUpdateProductForm();
                     return;
@@ -374,7 +374,6 @@
 
                 requestBody = "description=" + encodeURIComponent(this.UpdateDescription)
                     + "&username=" + encodeURIComponent(this.currentUser.username)
-                    + "&price=" + encodeURIComponent(this.UpdatePrice)
                     + "&stock=" + encodeURIComponent(this.UpdateStock)
                     + "&category=" + encodeURIComponent(this.UpdateCategory)
                     + "&avatar=" + encodeURIComponent(this.UpdateAvatar)
@@ -398,7 +397,7 @@
                             this.LoadProduct();
                             alert(result.msg);
                             this.FocusProduct.description=this.UpdateDescription;
-                            this.FocusProduct.price=this.UpdatePrice;
+                            // this.FocusProduct.price=this.UpdatePrice;
                             this.FocusProduct.stock=this.UpdateStock;
                             this.FocusProduct.category=this.UpdateCategory;
                             this.FocusProduct.avatar=this.UpdateAvatar;

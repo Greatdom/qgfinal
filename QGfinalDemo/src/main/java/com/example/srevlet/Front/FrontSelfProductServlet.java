@@ -77,12 +77,11 @@ public class FrontSelfProductServlet extends BaseServlet {
         product.setId(id);
         product=productService.selectById(product);
         String description=request.getParameter("description");
-        Double price=Double.parseDouble(request.getParameter("price"));
+//        Double price=Double.parseDouble(request.getParameter("price"));
         Integer stock=Integer.parseInt(request.getParameter("stock"));
         String category=request.getParameter("category");
         String avatar=request.getParameter("avatar");
         product.setDescription(description);
-        product.setPrice(price);
         product.setStock(stock);
         product.setCategory(category);
         product.setAvatar(avatar);

@@ -51,6 +51,11 @@
                 <button v-if="FocusDeal" class="updateButton" @click="ShowAddReportForm"><strong>举报</strong></button>
                 <button v-else class="noneUpdateButton">举报</button>
             </div>
+            <div>
+                <strong>确认接收货物</strong><br>
+                <button v-if="FocusDeal&&FocusDeal.dealStatus==='待收货'" class="updateButton" @click="ReceiveDeal"><strong>确认</strong></button>
+                <button v-else class="noneUpdateButton">确认</button>
+            </div>
         </div>
 
         <div class="LeftList" style="display: inline-block;width:70%;height: 80%">
@@ -211,6 +216,30 @@
             this.LoadAccount();
         },
         methods:{
+            ReceiveDeal(){
+                let requestBody;
+                requestBody = "id=" + encodeURIComponent(this.FocusDeal.id)
+                    + "&method=ReceiveDeal";
+                let UpdateHttp;
+                if(window.XMLHttpRequest){
+                    UpdateHttp=new XMLHttpRequest();
+                }else{
+                    UpdateHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                UpdateHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Front/Deal");
+                UpdateHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                UpdateHttp.send(requestBody);
+                UpdateHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        let result = JSON.parse(event.target.responseText);
+                        alert(result.msg);
+                        this.LoadDeal();
+                        this.FocusDeal=null;
+                        this.FocusProduct=null;
+                        this.FocusComment=null;
+                    }
+                }
+            },
             SaveCancelDeal(){
                 let requestBody;
                 requestBody = "id=" + encodeURIComponent(this.FocusDeal.id)

@@ -19,6 +19,23 @@ import java.util.List;
 @WebServlet("/Front/Deal")
 public class FrontDealServlet extends BaseServlet {
 
+    public void ReceiveDeal(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Integer id=Integer.valueOf(request.getParameter("id"));
+        Result result =null;
+        DealService dealService = new DealService();
+        Deal deal =dealService.selectById(id);
+        if(deal!=null){
+            deal.setDealStatus(DealStatusEnum.RECEIVE.getValue());
+            if(dealService.ChangeDealStatusToSend(deal)>0){
+                result=Result.success();
+            }else result=Result.error();
+        }else{
+            result=Result.error();
+        }
+        String jsonStr= JSON.toJSONString(result);
+        response.getWriter().write(jsonStr);
+    }
+
     public void SaveCancelDeal(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Integer id=Integer.valueOf(request.getParameter("id"));
         Result result =null;
@@ -26,7 +43,7 @@ public class FrontDealServlet extends BaseServlet {
         Deal deal =dealService.selectById(id);
         if(deal!=null){
             deal.setDealStatus(DealStatusEnum.CANCEL.getValue());
-            if(dealService.ChangeDealStatus(deal)>0){
+            if(dealService.ChangeDealStatusToCancel(deal)>0){
                 result=Result.success();
             }else result=Result.error();
         }else{

@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.common.enums.DealStatusEnum;
 import com.example.entity.*;
 import com.example.mapper.DealMapper;
 import com.example.mapper.ProductMapper;
@@ -60,7 +61,37 @@ public class DealService {
     public Deal selectById(int id){
         return dealMapper.selectById(id);
     }
-    public int ChangeDealStatus(Deal deal){
+    public int ChangeDealStatusToSend(Deal deal){
+        ProductMapper productMapper = new ProductMapper();
+        Product product = new Product();
+        product.setId(deal.getProductId());
+        product = productMapper.selectById(product);
+
+        SentenceService sentenceService = new SentenceService();
+        String content = null;
+
+
+        if(DealStatusEnum.PACK.getValue().equals(deal.getDealStatus())){
+            content = "您的商品["+product.getName()+"]在["+TimeUtil.getTime() +"]开始发货";
+            sentenceService.addSystemToUser(deal.getUserId(),content);
+        }else if(DealStatusEnum.SEND.getValue().equals(deal.getDealStatus())){
+            content = "您的商品["+product.getName()+"]在["+TimeUtil.getTime() +"]已经到达,请接收~";
+            sentenceService.addSystemToUser(deal.getUserId(),content);
+        }else if(DealStatusEnum.RECEIVE.getValue().equals(deal.getDealStatus())){
+            UserMapper userMapper = new UserMapper();
+            Account dbaccount = new Account();
+            dbaccount.setId(deal.getUserId());
+            dbaccount = userMapper.selectSingle(dbaccount);
+            content="您的商品["+product.getName()+"]"+"在["+TimeUtil.getTime()+"]时被用户["+dbaccount.getName()+"]接收了";
+            sentenceService.addSystemToUser(product.getUserId(),content);
+        }
+
+
+
+        return dealMapper.ChangeDealStatus(deal);
+
+    }
+    public int ChangeDealStatusToCancel(Deal deal){
 
         ProductMapper productMapper = new ProductMapper();
         Product product = new Product();
@@ -79,8 +110,14 @@ public class DealService {
         commentsService.deleteById(comment.getId());
 
         SentenceService sentenceService = new SentenceService();
-        String content="您于["+ TimeUtil.getTime() +"]成功退订商品["+product.getName()+"]";
-        sentenceService.addSystemToUser(deal.getUserId(),content);
+        String content1="您于["+ TimeUtil.getTime() +"]成功退订商品["+product.getName()+"]";
+        sentenceService.addSystemToUser(deal.getUserId(),content1);
+        UserMapper userMapper = new UserMapper();
+        Account dbaccount = new Account();
+        dbaccount.setId(deal.getUserId());
+        dbaccount = userMapper.selectSingle(dbaccount);
+        String content2="很遗憾您的商品["+product.getName()+"]"+"在["+TimeUtil.getTime()+"]时被用户["+dbaccount.getName()+"]退订";
+        sentenceService.addSystemToUser(product.getUserId(),content2);
 
         return dealMapper.ChangeDealStatus(deal);
     }

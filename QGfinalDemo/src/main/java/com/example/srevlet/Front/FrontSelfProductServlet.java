@@ -2,6 +2,7 @@ package com.example.srevlet.Front;
 
 import com.alibaba.fastjson.JSON;
 import com.example.common.Result;
+import com.example.common.enums.DealStatusEnum;
 import com.example.common.enums.LogsTypeEnum;
 import com.example.common.enums.ProductStatusEnum;
 import com.example.common.enums.ResultCodeEnum;
@@ -24,6 +25,32 @@ import java.util.List;
 @WebServlet("/Front/SelfProduct")
 public class FrontSelfProductServlet extends BaseServlet {
 
+    public void UpdateDealStatus (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        Integer id = Integer.valueOf(request.getParameter("id"));
+        Result result=null;
+        DealService dealService = new DealService();
+        Deal deal=dealService.selectById(id);
+        if(deal!=null){
+            String status=deal.getDealStatus();
+            if(DealStatusEnum.BUY.getValue().equals(status)){
+                deal.setDealStatus(DealStatusEnum.PACK.getValue());
+                if(dealService.ChangeDealStatusToSend(deal)>0){
+                    result=Result.success();
+                }else result=Result.error();
+            }else if(DealStatusEnum.PACK.getValue().equals(status)){
+                deal.setDealStatus(DealStatusEnum.SEND.getValue());
+                if(dealService.ChangeDealStatusToSend(deal)>0){
+                    result=Result.success();
+                }else result=Result.error();
+            }else{
+                result = Result.error();
+            }
+        }else{
+            result = Result.error();
+        }
+        String jsonStr= JSON.toJSONString(result);
+        response.getWriter().write(jsonStr);
+    }
 
 
     public void SaveAddProductForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

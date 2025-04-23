@@ -5,7 +5,7 @@ public enum DealStatusEnum {
     PACK("在发货"),
     SEND("待收货"),
     RECEIVE("已收货"),
-    COMMENT("已评论");
+    CANCEL("已退货");
 
     private String value;
 

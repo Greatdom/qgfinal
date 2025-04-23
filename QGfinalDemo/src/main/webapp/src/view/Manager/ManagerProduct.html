@@ -32,6 +32,61 @@
     </div>
     <div class="right">
 
+
+
+        <div class="LeftList" style="display: inline-block;width:70%;height: 80%">
+            <table>
+                <thead style="display:block;width:100%;height: 10%">
+                <tr style="background-color: cadetblue">
+                    <td><strong>ID</strong></td>
+                    <td><strong>名称</strong></td>
+                    <td><strong>分类</strong></td>
+                    <td><strong>介绍</strong></td>
+                    <td><strong>价格</strong></td>
+                    <td><strong>库存</strong></td>
+                    <td><strong>总评分</strong></td>
+                    <td><strong>流量</strong></td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-show="!ProductTable" class="NONE">
+                    <td><strong>无数据!</strong></td>
+                </tr>
+                <tr v-for="product in ProductTable" :key="product.id" @click="FocusOnProduct(product)">
+                    <td>{{ product?.id||'无ID数据'}}</td>
+                    <td>{{ product?.name||'无名称数据'}}</td>
+                    <td>{{ product?.category || '无分类数据' }}</td>
+                    <td>{{ product?.description || '无商品介绍数据' }}</td>
+                    <td>{{ product?.price ?? '无价格数据' }}</td>
+                    <td>{{ product?.stock ?? '无库存数据' }}</td>
+                    <td>{{ product?.score ?? '无总评分数据' }}</td>
+                    <td>{{ product?.popularity ?? '无流量数据' }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="RightList">
+            <table>
+                <thead style="display:block;width:100%;height: 10%">
+                <tr style="background-color: cadetblue">
+                    <td><strong>订单ID</strong></td>
+                    <td><strong>数量</strong></td>
+                    <td><strong>状态</strong></td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-show="!DealTable" class="NONE">
+                    <td color="black"><strong>{{ FocusProduct ? "没有订单" : '无订单数据！' }}</strong></td>
+                </tr>
+                <tr v-for="deal in DealTable" :key="deal.id" @click="FocusOnDeal(deal)">
+                    <td>{{ deal?.id||'无ID' }}</td>
+                    <td>{{ deal?.productNum||'无数量' }}</td>
+                    <td>{{ deal?.dealStatus||'无状态' }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
     </div>
 
 
@@ -42,11 +97,63 @@
         el: '#app',
         data: {
             currentUser: null,
+            ProductTable:null,
+            DealTable:null,
+            FocusProduct:null,
+            FocusDeal:null,
+            FocusBuyer:null,
         },
         mounted() {
             this.LoadAccount();
         },
         methods:{
+            FocusOnProduct(somebody){
+                this.FocusProduct=somebody;
+                let LoadHttp;
+                if(window.XMLHttpRequest){
+                    LoadHttp=new XMLHttpRequest();
+
+                }else{
+                    LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Manager/Product");
+                LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+                let requestBody ="productId=" + encodeURIComponent(this.FocusProduct.id)
+                    + "&method=FocusOnProduct";
+                LoadHttp.send(requestBody);
+                LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        const storedDeal=JSON.parse(event.target.responseText);
+                        if (storedDeal) {
+                            this.DealTable=storedDeal.data;
+                        }
+                    }
+                }
+
+            },
+            LoadProduct(){
+                let LoadHttp;
+                if(window.XMLHttpRequest){
+                    LoadHttp=new XMLHttpRequest();
+
+                }else{
+                    LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Manager/Product");
+                LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+                let requestBody ="&method=LoadProduct";
+                LoadHttp.send(requestBody);
+                LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        const storedProduct=JSON.parse(event.target.responseText);
+                        if (storedProduct) {
+                            this.ProductTable=storedProduct.data;
+                        }
+                    }
+                }
+            },
             LoadAccount(){
                 let LoginHttp;
                 if(window.XMLHttpRequest){
@@ -67,7 +174,7 @@
 
                         if (storedUser) {
                             this.currentUser = storedUser.data;
-                            console.log("当前用户：", this.currentUser);
+                            this.LoadProduct();
 
                         } else {
 

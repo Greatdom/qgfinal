@@ -5,6 +5,7 @@ import com.example.mapper.DealMapper;
 import com.example.mapper.ProductMapper;
 import com.example.mapper.SysteminfoMapper;
 import com.example.mapper.UserMapper;
+import com.example.util.TimeUtil;
 
 import java.util.List;
 
@@ -60,6 +61,27 @@ public class DealService {
         return dealMapper.selectById(id);
     }
     public int ChangeDealStatus(Deal deal){
+
+        ProductMapper productMapper = new ProductMapper();
+        Product product = new Product();
+        product.setId(deal.getProductId());
+        product = productMapper.selectById(product);
+        product.setStock(product.getStock()+deal.getProductNum());
+        productMapper.update(product);
+
+        Systeminfo systeminfo = Systeminfo.getInstance();
+        systeminfo.setTotalMoney(systeminfo.getTotalMoney()-(deal.getProductNum()*product.getPrice())/10000.0);
+        SysteminfoMapper systeminfoMapper = new SysteminfoMapper();
+        systeminfoMapper.update(systeminfo);
+
+        CommentsService commentsService = new CommentsService();
+        Comments comment = commentsService.selectByDeal(deal.getId());
+        commentsService.deleteById(comment.getId());
+
+        SentenceService sentenceService = new SentenceService();
+        String content="您于["+ TimeUtil.getTime() +"]成功退订商品["+product.getName()+"]";
+        sentenceService.addSystemToUser(deal.getUserId(),content);
+
         return dealMapper.ChangeDealStatus(deal);
     }
 }

@@ -19,6 +19,24 @@ import java.util.List;
 @WebServlet("/Front/Deal")
 public class FrontDealServlet extends BaseServlet {
 
+    public void SaveCancelDeal(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Integer id=Integer.valueOf(request.getParameter("id"));
+        Result result =null;
+        DealService dealService = new DealService();
+        Deal deal =dealService.selectById(id);
+        if(deal!=null){
+            deal.setDealStatus(DealStatusEnum.CANCEL.getValue());
+            if(dealService.ChangeDealStatus(deal)>0){
+                result=Result.success();
+            }else result=Result.error();
+        }else{
+            result=Result.error();
+        }
+        String jsonStr= JSON.toJSONString(result);
+        response.getWriter().write(jsonStr);
+    }
+
+
     public void SaveAddReport(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String reportType=request.getParameter("reportType");
         String content=request.getParameter("content");

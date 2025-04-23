@@ -27,17 +27,23 @@ public class FrontDealServlet extends BaseServlet {
         Result result =null;
         ReportService reportService=new ReportService();
         SentenceService sentenceService=new SentenceService();
-        Report report=new Report();
-        report.setReportType(reportType);
-        report.setContent(content);
-        report.setUserId(userId);
-        report.setPointerId(pointerId);
-        report.setResult("待处理");
-        report.setReportTime(TimeUtil.getTime());
-        if(reportService.add(report)>0&&sentenceService.addUserToSystem(userId,content)>0){
-            result=Result.success();
+
+
+        if(reportService.selectByTypeAndPointerId(reportType,pointerId)!=null){
+            Report report=new Report();
+            report.setReportType(reportType);
+            report.setContent(content);
+            report.setUserId(userId);
+            report.setPointerId(pointerId);
+            report.setResult("待处理");
+            report.setReportTime(TimeUtil.getTime());
+            if(reportService.add(report)>0&&sentenceService.addUserToSystem(userId,content)>0){
+                result=Result.success();
+            }else{
+                result=Result.error();
+            }
         }else{
-            result=Result.error();
+            result=Result.error(ResultCodeEnum.REPORT_ERROR);
         }
         String jsonStr= JSON.toJSONString(result);
         response.getWriter().write(jsonStr);

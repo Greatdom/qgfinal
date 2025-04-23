@@ -39,14 +39,14 @@
             </div>
             <div>
                 <strong>对该举报进行处理</strong><br>
-                <button v-if="FocusReport" class="updateButton"><strong>批准</strong></button>
+                <button v-if="FocusReport&&FocusReport.result==='待处理'" @click="DealWithReport(1)" class="updateButton"><strong>批准</strong></button>
                 <button v-else class="noneUpdateButton">批准</button>
-                <button v-if="FocusReport" class="updateButton"><strong>反对</strong></button>
+                <button v-if="FocusReport&&FocusReport.result==='待处理'" @click="DealWithReport(2)" class="updateButton"><strong>反对</strong></button>
                 <button v-else class="noneUpdateButton">反对</button>
             </div>
             <div>
                 <strong>查看这个举报</strong><br>
-                <button v-if="FocusReport" class="updateButton"><strong>查看</strong></button>
+                <button v-if="FocusReport" class="updateButton" @click="RePortForm=!RePortForm"><strong>查看</strong></button>
                 <button v-else class="noneUpdateButton">查看</button>
             </div>
         </div>
@@ -74,6 +74,46 @@
         </div>
 
     </div>
+
+    <div v-show="RePortForm" class="HoldForm">
+        <div class="form">
+            <h2 style="display:block;width:100%;text-align:center;padding:10px 0;">举报内容</h2>
+
+            <strong>关于举报</strong>
+            <p>ID:{{FocusReport?.id||"无ID数据"}}</p>
+            <p>举报时间:{{FocusReport?.reportTime||"无时间数据"}}</p>
+            <p>举报结果:{{FocusReport?.result||"无结果数据"}}</p>
+            <div v-if="FocusReport&&FocusReport.reportType==='用户'">
+                <strong>关于用户</strong>
+                <p>ID:{{FocusCounterPart?.id||"无ID数据"}}</p>
+                <p>账号:{{FocusCounterPart?.username||"无账号数据"}}</p>
+                <p>昵称:{{FocusCounterPart?.name||"无昵称数据"}}</p>
+                <p>邮箱:{{FocusCounterPart?.email||"无邮箱数据"}}</p>
+                <p>电话:{{FocusCounterPart?.phone||"无电话数据"}}</p>
+                <p>总名誉:{{FocusCounterPart?.reputation??"无总名誉数据"}}</p>
+                <p>流量:{{FocusCounterPart?.popularity??"无流量数据"}}</p>
+                <p>用户状态:{{FocusCounterPart?.status||"无状态数据"}}</p>
+            </div>
+            <div v-else-if="FocusReport&&FocusReport.reportType==='商品'">
+                <strong>关于商品</strong>
+                <p>ID:{{FocusCounterPart?.id||"无ID数据"}}</p>
+                <p>名称:{{FocusCounterPart?.name||"无名称数据"}}</p>
+                <p>描述:{{FocusCounterPart?.description||"无描述数据"}}</p>
+                <p>价格:{{FocusCounterPart?.price??"无价格数据"}}</p>
+                <p>库存:{{FocusCounterPart?.stock??"无库存数据"}}</p>
+                <p>分类:{{FocusCounterPart?.category||"无分类数据"}}</p>
+                <p>发布时间:{{FocusCounterPart?.publishTime||"无发布时间数据"}}</p>
+                <p>发布状态:{{FocusCounterPart?.publishStatus||"无发布状态数据"}}</p>
+                <p>总评分:{{FocusCounterPart?.score??"无总评分数据"}}</p>
+                <p>流量:{{FocusCounterPart?.popularity??"无流量数据"}}</p>
+            </div>
+
+            <div>
+                <button @click="RePortForm=!RePortForm" class="formButton" style="background-color: darkgreen;color:aliceblue">关闭</button>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
@@ -84,11 +124,46 @@
             ReportTable:null,
             FocusReport:null,
             FocusCounterPart:null,
+            RePortForm:false,
         },
         mounted() {
             this.LoadAccount();
         },
         methods:{
+            DealWithReport(num){
+              let result;
+              if(num===1){
+                  result="批准";
+              }else{
+                  result="反对";
+              }
+
+                let LoadHttp;
+                if(window.XMLHttpRequest){
+                    LoadHttp=new XMLHttpRequest();
+
+                }else{
+                    LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Manager/Report");
+                LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+                let requestBody ="result=" + encodeURIComponent(result)
+                    +"&id=" + encodeURIComponent(this.FocusReport.id)
+                    +"&method=DealWithReport";
+                LoadHttp.send(requestBody);
+                LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        const storedReport=JSON.parse(event.target.responseText);
+                        if (storedReport.code!=="200") {
+                            alert(storedReport.msg);
+                        }
+                        this.FocusReport=null;
+                        this.LoadReport();
+                    }
+                }
+
+            },
             FocusOnRePort(somebody){
               this.FocusReport=somebody;
                 let LoadHttp;

@@ -4,6 +4,7 @@ import com.example.entity.Report;
 import com.example.entity.Systeminfo;
 import com.example.mapper.ReportMapper;
 import com.example.mapper.SysteminfoMapper;
+import com.example.util.CRUDUtils;
 
 import java.util.List;
 
@@ -26,8 +27,14 @@ public class ReportService {
     public List<Report> selectByField(Report report) {
         return reportMapper.selectByFlied(report);
     }
-    public int selectById(Integer id) {
+    public Report selectById(int id) {
         return reportMapper.selectById(id);
+    }
+    public Report selectByTypeAndPointerId(String reportType, Integer pointerId) {
+        Report report = new Report();
+        report.setReportType(reportType);
+        report.setPointerId(pointerId);
+        return reportMapper.selectByTypeAndPointerId(report);
     }
     public int changeResult(Report report) {
         return reportMapper.changeResult(report);

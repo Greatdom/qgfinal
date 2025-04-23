@@ -2,6 +2,7 @@ package com.example.Mapper;
 
 import com.example.entity.Report;
 import com.example.mapper.ReportMapper;
+import com.example.util.CRUDUtils;
 import com.example.util.TimeUtil;
 import org.junit.Test;
 
@@ -35,5 +36,14 @@ public class ReportMapperTest {
         report.setUserId(1);
         List<Report> reports = reportMapper.selectByFlied(report);
         System.out.println(reports);
+    }
+    @Test
+    public void selectByTypeAndPointerId(){
+        ReportMapper reportMapper = new ReportMapper();
+        Report report = new Report();
+        report.setReportType("用户");
+        report.setPointerId(1);
+        Report report2 = reportMapper.selectByTypeAndPointerId(report);
+        System.out.println(report2);
     }
 }

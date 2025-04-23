@@ -57,9 +57,18 @@ public class ReportMapper {
             }
         }
     }
-    public int selectById(Integer id){
+    public Report selectByTypeAndPointerId(Report report){
+        if(report==null){
+            return null;
+        }
+        String reportType=report.getReportType();
+        Integer pointerId=report.getPointerId();
+        String selectSql="select * from report where report_type=? and pointer_id=?";
+        return CRUDUtils.queryForObject(Report.class,selectSql,reportType,pointerId);
+    }
+    public Report selectById(int id){
         String selectSql="select * from report where id=?";
-        return CRUDUtils.update(selectSql,id);
+        return CRUDUtils.queryForObject(Report.class,selectSql,id);
     }
     public int changeResult(Report report){
         String result=report.getResult();
@@ -67,6 +76,5 @@ public class ReportMapper {
         String updateSql="update report set result=? where id=?";
         return CRUDUtils.update(updateSql,result,id);
     }
-    //实际上自己不能举报自己
 
 }

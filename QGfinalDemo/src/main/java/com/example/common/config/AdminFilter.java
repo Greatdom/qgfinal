@@ -17,10 +17,8 @@ public class AdminFilter implements Filter{
         String role = (String) session.getAttribute("role");
 
         if (role != null&&role.equals("ADMIN")) {
-            System.out.println("right");
             filterChain.doFilter(request, response);
         } else {
-            System.out.println("wrong");
         }
     }
 

@@ -42,5 +42,7 @@ public class ProductService {
         }
 
     }
-
+    public int ChangePublishStatus(Product product){
+        return productMapper.ChangePublishStatus(product);
+    }
 }

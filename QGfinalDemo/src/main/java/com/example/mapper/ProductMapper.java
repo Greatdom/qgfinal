@@ -120,4 +120,6 @@ public class ProductMapper {
         int accountCount = CRUDUtils.update(accSql,account.getReputation()-comments.getScore(),account.getId());
         return (accountCount==1&&productCount==1)?1:0;
     }
+
+
 }

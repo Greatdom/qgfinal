@@ -2,80 +2,61 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>图片操作</title>
     <script src="src/js/vue.js"></script>
 </head>
 <body>
 <div id="app">
-    <button @click="login">登录</button>
-    <button @click="find">寻找</button>
-    <input type="datetime-local" v-model="time">
-    <p>{{ time }}</p>
-<!--    <img src="http://localhost:8080/QGfinalDemo_war/CheckCodeServlet" alt="">-->
+    <h2>图片操作</h2>
+    <input type="file" @change="prepareUpload" ref="fileInput" accept="image/*">
+    <button @click="uploadFile">上传图片</button>
+    <p>上传的图片名：{{ fileName }}</p>
 </div>
-
 
 <script>
     new Vue({
         el: '#app',
         data: {
-            time:"2025-04-13T18:47",
-            method:""
-        },
-        mounted() {
-
+            fileName: "", // 用于存储图片名
+            fileData: null // 用于存储图片数据
         },
         methods: {
-            login(){
-
-                    this.method="login";
-                    let LoadHttp;
-                    if(window.XMLHttpRequest){
-                        LoadHttp=new XMLHttpRequest();
-
-                    }else{
-                        LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
-                    }
-                    LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/WebsServlet");
-                    LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-                    let requestBody = "method=" + encodeURIComponent(this.method);
-                    LoadHttp.send(requestBody);
-                    LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
-
-                        if (event.target.readyState === 4 && event.target.status === 200) {
-
-                        }
-
-                    }
-                    this.method="";
-
+            // 准备图片上传
+            prepareUpload(event) {
+                this.fileData = event.target.files[0];
+                this.fileName = this.fileData.name;
             },
-            find(){
-                this.method="find";
+            // 图片上传
+            uploadFile() {
                 let LoadHttp;
-                if(window.XMLHttpRequest){
-                    LoadHttp=new XMLHttpRequest();
-
-                }else{
-                    LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                if (window.XMLHttpRequest) {
+                    LoadHttp = new XMLHttpRequest();
+                } else {
+                    LoadHttp = new ActiveXObject("Microsoft.XMLHTTP");
                 }
-                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/WebsServlet");
-                LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-                let requestBody = "method=" + encodeURIComponent(this.method);
-                LoadHttp.send(requestBody);
-
-                LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
-
+                LoadHttp.open("POST", "http://localhost:8080/QGfinalDemo_war/File");
+                let formData = new FormData();
+                formData.append("method", "upload");
+                formData.append("file", this.fileData);
+                LoadHttp.send(formData);
+                LoadHttp.onreadystatechange = (event) => {
                     if (event.target.readyState === 4 && event.target.status === 200) {
-
+                        const message = event.target.responseText.split(":", 2);
+                        const type = message[0];
+                        const content = message[1];
+                        if(type==='error'){
+                            alert("1");
+                        }else if(type==='url'){
+                            alert("2");
+                        }else{
+                            alert("3");
+                        }
+                        alert(event.target.responseText);
                     }
-
-                }
-                this.method="";
-            }
-        },
+                };
+            },
+        }
     });
-
 </script>
 </body>
 </html>

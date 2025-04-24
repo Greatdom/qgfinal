@@ -15,8 +15,9 @@ public enum ResultCodeEnum {
     PARAM_PASSWORD_ERROR("5005", "原密码输入错误"),
     CHECK_CODE_ERROR("5006","验证码错误"),
     PRODUCT_BUY_ERROR("5008","无法购买商品"),
-    BAN_ERROR("5009","用户已被封禁"),
-    REPORT_ERROR("5010","不能重复举报");
+    BAN_ERROR("5009","您已被封禁,请进行申诉以求解封账号！-->[web.example.com]"),
+    REPORT_ERROR("5010","不能重复举报"),
+    AVATAR_ERROR("5011","图片上传失败");
 
     public String code;
     public String msg;

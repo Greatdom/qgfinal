@@ -45,9 +45,8 @@
       <p>角色:{{currentUser?.role||'无角色'}}</p>
       <p></p>
     </div>
-    <strong v-show="currentUser&&currentUser.role==='USER'">修改个人信息</strong><br>
+    <strong>修改个人信息</strong><br>
     <button v-show="currentUser&&currentUser.role==='USER'" class="updateButton" @click="ShowForm"><strong>修改个人信息</strong></button>
-    <strong v-show="!currentUser||currentUser.role!=='USER'">未登录用户无法修改个人信息</strong><br>
     <button v-show="!currentUser||currentUser.role!=='USER'" class="noneUpdateButton">修改个人信息</button>
   </div>
 

@@ -42,21 +42,18 @@
                 <button class="updateButton" @click="SearchProduct">搜索</button>
             </div>
             <div>
-                <strong v-show="FocusProduct">和商家进行私聊</strong><br>
+                <strong>和商家进行私聊</strong><br>
                 <button v-show="FocusProduct" class="updateButton" @click="GoToChat"><strong>和商家私聊</strong></button>
-                <strong v-show="!FocusProduct">没有焦点无法和商家私聊</strong><br>
                 <button v-show="!FocusProduct" class="noneUpdateButton">和商家私聊</button>
             </div>
             <div>
-                <strong v-show="FocusProduct">购买商品</strong><br>
+                <strong>购买商品</strong><br>
                 <button v-show="FocusProduct" class="updateButton" @click="ShowBuyForm"><strong>下单</strong></button>
-                <strong v-show="!FocusProduct">没有焦点无法购买商品</strong><br>
                 <button v-show="!FocusProduct" class="noneUpdateButton">下单</button>
             </div>
             <div>
-                <strong v-show="FocusDeal">查看订单和评论</strong><br>
+                <strong>查看订单和评论</strong><br>
                 <button v-show="FocusDeal" class="updateButton" @click="ShowUpdateDealForm"><strong>订单信息</strong></button>
-                <strong v-show="!FocusDeal">没有焦点无法查看订单和评论</strong><br>
                 <button v-show="!FocusDeal" class="noneUpdateButton">订单信息</button>
             </div>
         </div>

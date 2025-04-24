@@ -32,7 +32,23 @@
     </div>
     <div class="right">
 
-
+        <div class="HeaderList"
+             style="display: flex;justify-content: space-between;height:15%;width:98%;background-color: cornflowerblue">
+            <div>
+                <p style="font-size: 12px"><strong>正在焦点的用户</strong>：{{FocusUser? FocusUser.id:"无焦点"}}</p>
+            </div>
+            <div style="height:100%;width:30%;background-color: blueviolet;border:black 3px solid">
+                <div style="display: flex;height:20%;width:100%;justify-content: center;">
+                    <h3>商品封禁</h3>
+                </div>
+                <div style="display: flex; justify-content: center; align-items: center;height:80%;width:100%;">
+                    <button v-if="FocusProduct&&FocusProduct.publishStatus==='已发布'" class="updateButton" @click="ChangeProductStatus(1)"><strong>封禁商品</strong></button>
+                    <button v-else class="noneUpdateButton">封禁商品</button>
+                    <button v-if="FocusProduct&&FocusProduct.publishStatus==='被封禁'" class="updateButton" @click="ChangeProductStatus(2)"><strong>解封商品</strong></button>
+                    <button v-else class="noneUpdateButton">解封商品</button>
+                </div>
+            </div>
+        </div>
 
         <div class="LeftList" style="display: inline-block;width:70%;height: 80%">
             <table>
@@ -46,6 +62,7 @@
                     <td><strong>库存</strong></td>
                     <td><strong>总评分</strong></td>
                     <td><strong>流量</strong></td>
+                    <td><strong>状态</strong></td>
                 </tr>
                 </thead>
                 <tbody>
@@ -61,6 +78,7 @@
                     <td>{{ product?.stock ?? '无库存数据' }}</td>
                     <td>{{ product?.score ?? '无总评分数据' }}</td>
                     <td>{{ product?.popularity ?? '无流量数据' }}</td>
+                    <td>{{ product?.publishStatus || '无商品状态数据' }}</td>
                 </tr>
                 </tbody>
             </table>
@@ -107,6 +125,39 @@
             this.LoadAccount();
         },
         methods:{
+            ChangeProductStatus(num){
+                let status;
+                if(num===1){
+                    status="被封禁";
+                }else{
+                    status="已发布";
+                }
+                let LoadHttp;
+                if(window.XMLHttpRequest){
+                    LoadHttp=new XMLHttpRequest();
+
+                }else{
+                    LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                LoadHttp.open("POST","http://localhost:8080/QGfinalDemo_war/Manager/Product");
+                LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+                let requestBody ="status=" + encodeURIComponent(status)
+                    + "&id=" + encodeURIComponent(this.FocusProduct.id)
+                    + "&method=ChangeProductStatus";
+                LoadHttp.send(requestBody);
+                LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        const storedUser=JSON.parse(event.target.responseText);
+                        if (storedUser.code==="200") {
+                            this.LoadProduct();
+                            this.FocusProduct=null;
+                        }
+                        alert(storedUser.msg);
+
+                    }
+                }
+            },
             FocusOnProduct(somebody){
                 this.FocusProduct=somebody;
                 let LoadHttp;

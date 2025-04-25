@@ -43,9 +43,9 @@
                     <td><strong>无数据!</strong></td>
                 </tr>
                 <tr v-for="session in SessionTable" :key="session.id" @click="FocusOnSession(session)">
-                    <td v-if="FocusSession==null&&session.headRole==='SYSTEM'">与[系统管理员]的会话</td>
+                    <td v-if="session.headRole==='SYSTEM'">与[系统管理员]的会话</td>
                     <td v-else-if="FocusSession==null||FocusSession.id!==session.id">与用户ID:[{{ session.headId===currentUser.id? session.hindId:session.headId }}]的会话</td>
-                    <td v-show="FocusSession!=null&&FocusSession.id===session.id">与用户:[{{ FocusCounterPart }}]的会话</td>
+                    <td v-else>与用户:[{{ FocusCounterPart }}]的会话</td>
                 </tr>
                 </tbody>
             </table>

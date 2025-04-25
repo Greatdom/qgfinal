@@ -1,6 +1,7 @@
 package com.example.mapper;
 
 
+import com.example.common.enums.ProductStatusEnum;
 import com.example.entity.Account;
 import com.example.entity.Comments;
 import com.example.entity.Product;
@@ -121,5 +122,9 @@ public class ProductMapper {
         return (accountCount==1&&productCount==1)?1:0;
     }
 
+    public List<Product> selectNotPublished(){
+        String selectSql="select * from product where publish_status=?";
+        return CRUDUtils.queryForList(Product.class,selectSql, ProductStatusEnum.NOT_PUBLISHED.getValue());
+    }
 
 }

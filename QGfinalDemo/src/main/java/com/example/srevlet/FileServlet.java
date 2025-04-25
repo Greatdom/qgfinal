@@ -23,8 +23,8 @@ public class FileServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         // 获取项目根目录
-        String projectPath = getServletContext().getRealPath("/");
-        filePath = projectPath + "files" + File.separator;
+
+        filePath = "E:\\程序代码\\GitHubWork\\qgfinal\\QGfinalDemo\\src\\main\\webapp\\file\\";
         File directory = new File(filePath);
         if (!directory.exists()) {
             directory.mkdirs();
@@ -74,6 +74,6 @@ public class FileServlet extends HttpServlet {
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        response.getWriter().write("url:" + filePath + uniqueFileName );
+        response.getWriter().write( uniqueFileName );
     }
 }

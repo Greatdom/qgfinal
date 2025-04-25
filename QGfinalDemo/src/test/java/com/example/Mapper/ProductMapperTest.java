@@ -63,5 +63,11 @@ public class ProductMapperTest {
         List<Product> productList = productMapper.selectByUser(product);
         System.out.println(productList);
     }
+    @Test
+    public void selectNotPublished() {
+        ProductMapper productMapper = new ProductMapper();
+        List<Product> productList = productMapper.selectNotPublished();
+        System.out.println(productList);
+    }
 
 }

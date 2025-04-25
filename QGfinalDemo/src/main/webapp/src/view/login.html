@@ -32,7 +32,7 @@
     </div>
     <div class="formInputText">
       <label for="LoginPassWord"></label>
-      <input id="LoginPassWord" type="password" placeholder="请输入密码" v-model="Password">
+      <input id="LoginPassWord" type="text" placeholder="请输入密码" v-model="Password">
     </div>
 
     <div class="formSelect">
@@ -99,7 +99,7 @@
           this.CurrentUser= JSON.parse(event.target.responseText);
           console.log(this.CurrentUser);
           this.Username=this.CurrentUser.data.username;
-          this.Password=this.CurrentUser.data.password;
+
           this.Email=this.CurrentUser.data.email;
           this.Phone=this.CurrentUser.data.phone;
           this.Role=this.CurrentUser.data.role;

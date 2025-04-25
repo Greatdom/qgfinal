@@ -27,6 +27,39 @@ import java.io.IOException;
 @WebServlet("/WebsServlet")
 public class WebsServlet extends BaseServlet {
 
+    public void UpdateAvatar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Integer id = Integer.valueOf(request.getParameter("id"));
+        String avatar = request.getParameter("avatar");
+        String role = request.getParameter("role");
+        Account account = new Account();
+        account.setId(id);
+        Result result=null;
+        if("ADMIN".equals(role)){
+            AdminService adminService = new AdminService();
+            account = adminService.selectSingle(account);
+            if(account!=null){
+                account.setAvatar(avatar);
+                adminService.update(account);
+                result=Result.success();
+            }else result = Result.error();
+        }else if("USER".equals(role)){
+            UserService userService = new UserService();
+            account = userService.selectSingle(account);
+            if(account!=null){
+                account.setAvatar(avatar);
+                userService.update(account);
+                result=Result.success();
+            }else result = Result.error();
+        }else{
+            result = Result.error(ResultCodeEnum.USER_NOT_EXIST_ERROR);
+        }
+
+
+
+        String jsonStr=JSON.toJSONString(result);
+        response.getWriter().write(jsonStr);
+    }
+
     public void LoadSystem(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Result result=null;
         Systeminfo systeminfo =Systeminfo.getInstance();
@@ -46,7 +79,6 @@ public class WebsServlet extends BaseServlet {
         String name=request.getParameter("name");
         String email=request.getParameter("email");
         String phone=request.getParameter("phone");
-        String avatar=request.getParameter("avatar");
         String role=request.getParameter("role");
         String payPassword=request.getParameter("payPassword");
         //avatar
@@ -62,7 +94,6 @@ public class WebsServlet extends BaseServlet {
                 account.setName(name);
                 account.setEmail(email);
                 account.setPhone(phone);
-                account.setAvatar(avatar);
                 if(adminService.update(account)>0) result = Result.success(account);
                 else result=Result.error(ResultCodeEnum.USER_NOT_EXIST_ERROR);
             }else{
@@ -76,7 +107,6 @@ public class WebsServlet extends BaseServlet {
                 account.setName(name);
                 account.setEmail(email);
                 account.setPhone(phone);
-                account.setAvatar(avatar);
                 account.setPayPassword(payPassword);
                 if(userService.update(account)>0) result = Result.success(account);
                 else result=Result.error(ResultCodeEnum.PARAM_EXIST_ERROR);

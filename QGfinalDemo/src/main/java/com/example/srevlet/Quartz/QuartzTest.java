@@ -26,7 +26,4 @@ public class QuartzTest {
         //把SimpleTrigger和JobDetail注册给调度器
         scheduler.scheduleJob(jobDetail,trigger);
     }
-    public static void main(String[] args) throws Exception {
-        demo1();
-    }
 }

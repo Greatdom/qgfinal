@@ -30,7 +30,7 @@ public class SentenceMapperTest {
     @Test
     public void selectBySessionId() {
         SentenceMapper sentenceMapper = new SentenceMapper();
-        List<Sentence> sentences = sentenceMapper.selectBySessionId(1);
+        List<Sentence> sentences = sentenceMapper.selectBySessionId(3);
         System.out.println(sentences);
     }
 }

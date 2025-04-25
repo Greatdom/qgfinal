@@ -50,7 +50,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="LeftList" style="display: inline-block;width:70%;height: 80%;background-color: whitesmoke">
+        <div class="ChatList" style="display: inline-block;width:70%;height: 80%;background-color: lightblue">
             <table>
                 <thead style="display:block;width:100%;height: 10%">
                 <tr style="background-color: cadetblue">
@@ -61,12 +61,14 @@
                 <tr v-show="!SentenceTable" class="NONE">
                     <td color="black"><strong>发条消息吧~</strong></td>
                 </tr>
-                <tr v-for="sentence in SentenceTable" :key="sentence.id">
-                    <td>{{ sentence?.id||'无ID' }}</td>
-                    <td>{{ sentence?.content||'无内容' }}</td>
-                    <td>{{ sentence?.sentenceTime||'无时间' }}</td>
-                    <td>{{ sentence?.userId||'无说话者ID' }}</td>
-                    <td>{{ sentence?.userRole||'无说话者角色' }}</td>
+                <tr style="height: 16%" v-for="sentence in SentenceTable" :key="sentence.id">
+                    <td style="color: brown"
+                        v-if="sentence&&currentUser&&sentence.userId===currentUser.id&&sentence.userRole===currentUser.role">
+                        {{ currentUser.name }}:{{ sentence?.content||'无内容' }}---{{ sentence?.sentenceTime||'无时间' }}
+                    </td>
+                    <td v-else style="color: orange" >
+                        {{ sentence?.sentenceTime||'无时间' }}---{{ sentence?.content||'无内容' }}:{{ FocusCounterPart }}
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -77,6 +79,14 @@
             <div>
                 <p style="font-size: 12px" v-if="FocusCounterPart"><strong>正在和用户[{{ FocusCounterPart }}]聊天</strong></p>
                 <p style="font-size: 12px" v-else><strong>尚未进入一段会话</strong></p>
+            </div>
+            <div>
+                <h4>给对方发送消息</h4>
+                <textarea @keyup.enter="sendMessage" placeholder="Type a message..." v-model="newMessage" style="resize: none;" cols="30" rows="2"></textarea>
+                <div>
+                    <button v-if="FocusSession&&(FocusSession.headRole!=='SYSTEM'&&FocusSession.hindRole!=='SYSTEM')" class="updateButton" @click="sendMessage"><strong>发送</strong></button>
+                    <button v-else class="noneUpdateButton">发送</button>
+                </div>
             </div>
             <div style="width:20%;height:100%;background-color: greenyellow;border:black solid 5px;overflow: auto;
     overflow-x: hidden;">
@@ -92,14 +102,7 @@
                     <li v-for="(message, index) in UserMessages" :key="index">{{ message }}</li>
                 </ul>
             </div>
-            <div>
-                <h2>WebSocket Chat</h2>
-                <input v-model="newMessage" @keyup.enter="sendMessage" placeholder="Type a message...">
-                <div>
-                    <button v-if="FocusSession&&(FocusSession.headRole!=='SYSTEM'&&FocusSession.hindRole!=='SYSTEM')" class="updateButton" @click="sendMessage"><strong>发送</strong></button>
-                    <button v-else class="noneUpdateButton">发送</button>
-                </div>
-            </div>
+
         </div>
 
 
@@ -126,6 +129,9 @@
 
         },
         mounted() {
+            // this.SentenceTable=[{"content":"我向你发起了会话","id":3,"sentenceTime":"2025-04-22T11:54","sessionId":3,"userId":2,"userRole":"USER"},
+            //     {"content":"看在作者面子上买了","id":4,"sentenceTime":"2025-04-22T11:56","sessionId":3,"userId":2,"userRole":"USER"},
+            //     {"content":"666你ban我干嘛","id":16,"sentenceTime":"2025-04-25T22:31","sessionId":3,"userId":1,"userRole":"USER"}];
             this.LoadAccount();
         },
         methods:{

@@ -47,7 +47,6 @@
     </div>
     <strong>修改个人信息</strong><br>
     <button v-show="currentUser&&currentUser.role==='USER'" class="updateButton" @click="ShowForm"><strong>修改个人信息</strong></button>
-    <div style="width: 30px;height: 30px;background-color: black" @click="ShowForm"></div>
     <button v-show="!currentUser||currentUser.role!=='USER'" class="noneUpdateButton">修改个人信息</button>
   </div>
 

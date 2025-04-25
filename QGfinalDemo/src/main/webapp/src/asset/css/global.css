@@ -161,8 +161,20 @@
 
 
 
-
-
+.Home .right .LeftList{
+    display: inline-block;
+    width:70%;
+    height: 75%;
+}
+.Home .right .RightList{
+    display:block;
+    width:100%;
+    text-align:center;
+    padding:10px 0;
+}
+.Home .right .HeaderList{
+    display: flex;justify-content: space-between;height:15%;width:98%;background-color: cornflowerblue
+}
 
 
 .Home .right table{
@@ -191,7 +203,7 @@
 
 .Home .right tr {
     display: flex;
-    justify-content: center; /
+    justify-content: center;
 align-items: center;
     width: 600px;
     height: 40px;

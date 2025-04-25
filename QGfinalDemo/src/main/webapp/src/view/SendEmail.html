@@ -21,77 +21,132 @@
             <input type="text" placeholder="请输入邮箱来获得验证码" v-model="Email">
         </div>
 
-        <div style="text-align: end"><p @click="SendEmail"><strong>获取验证码</strong></p></div>
+        <!-- 发送验证码按钮 -->
+        <div style="text-align: end">
+            <button
+                    class="formButton"
+                    @click="SendEmail"
+                    :disabled="isCooldown"
+                    :style="{ cursor: isCooldown ? 'default' : 'pointer' }">
+                <strong v-if="!isCooldown">获取验证码</strong>
+                <strong v-else>剩余时间：{{ cooldownTime }} 秒</strong>
+            </button>
+        </div>
 
         <div class="formSelect">
             <strong>角色:</strong>
             <label>
-                <input type="radio" value="ADMIN" v-model="Role" >管理员
-                <input type="radio" value="USER" v-model="Role" >用户
+                <input type="radio" value="ADMIN" v-model="Role">管理员
+                <input type="radio" value="USER" v-model="Role">用户
             </label>
+        </div>
+
+        <div class="formInputText">
+            <strong>验证码</strong>
+            <input type="text" placeholder="请输入验证码" v-model="EmailCode">
         </div>
 
         <div class="formInputText">
             <input type="password" placeholder="请输入新密码" v-model="NewPassword">
         </div>
 
-
         <div style="text-align: end"><p @click="TurnToLogin"><strong>返回登录</strong></p></div>
         <div>
-            <button class="formButton" @click="Save">确认更改密码</button>
+            <button class="formButton" @click="SaveChangePassword">确认更改密码</button>
         </div>
     </div>
 </div>
 
-
 <script>
-    const app=new Vue({
-        el:'#app',
-        data:{
-            Email:"",
-            Role:"USER",
-            EmailCode:"",
-            NewPassword:"",
-        },
-        mounted(){
-
+    const app = new Vue({
+        el: '#app',
+        data: {
+            Email: "",
+            Role: "USER",
+            EmailCode: "",
+            NewPassword: "",
+            isCooldown: false, // 是否处于冷却状态
+            cooldownTime: 60, // 冷却时间（秒）
         },
         methods: {
-            Save(){
+            SaveChangePassword() {
+                this.Email=this.Email.trim();
+                this.EmailCode=this.EmailCode.trim();
+                this.NewPassword=this.NewPassword.trim();
+                let requestBody = "email=" + encodeURIComponent(this.Email)
+                    + "&password=" + encodeURIComponent(this.NewPassword)
+                    + "&role=" + encodeURIComponent(this.Role)
+                    + "&code=" + encodeURIComponent(this.EmailCode)
+                    + "&method=SaveChangePassword";
+                let UpdateHttp;
+                if (window.XMLHttpRequest) {
+                    UpdateHttp = new XMLHttpRequest();
+                } else {
+                    UpdateHttp = new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                UpdateHttp.open("POST", "http://localhost:8080/QGfinalDemo_war/WebsServlet");
+                UpdateHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                UpdateHttp.send(requestBody);
+                UpdateHttp.onreadystatechange = (event) => {
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        let result = JSON.parse(event.target.responseText);
+                        alert(result.msg);
+                        this.TurnToLogin();
+                    }
+                }
 
             },
-            SendEmail(){
-                this.Email=this.Email.trim();
+            SendEmail() {
+                if (this.isCooldown) {
+                    alert("请稍后再试，剩余时间：" + this.cooldownTime + " 秒");
+                    return;
+                }
+
+                this.Email = this.Email.trim();
                 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-                if(!emailRegex.test(this.Email)){
+                if (!emailRegex.test(this.Email)) {
                     alert("请输入合法的邮箱地址");
                     return;
                 }
-                let requestBody;
-                requestBody = "email=" + encodeURIComponent(this.Email)
-                    + "&method=SendEmail";
+
+                // 开始冷却
+                this.isCooldown = true;
+                this.startCooldown();
+
+                let requestBody = "email=" + encodeURIComponent(this.Email) + "&method=SendEmail";
                 let UpdateHttp;
-                if(window.XMLHttpRequest){
-                    UpdateHttp=new XMLHttpRequest();
-                }else{
-                    UpdateHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                if (window.XMLHttpRequest) {
+                    UpdateHttp = new XMLHttpRequest();
+                } else {
+                    UpdateHttp = new ActiveXObject("Microsoft.XMLHTTP");
                 }
-                UpdateHttp.open("POST","http://localhost:8080/QGfinalDemo_war/WebsServlet");
+                UpdateHttp.open("POST", "http://localhost:8080/QGfinalDemo_war/WebsServlet");
                 UpdateHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
                 UpdateHttp.send(requestBody);
-                UpdateHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                UpdateHttp.onreadystatechange = (event) => {
                     if (event.target.readyState === 4 && event.target.status === 200) {
                         let result = JSON.parse(event.target.responseText);
                         alert(result);
                     }
                 }
             },
-            TurnToLogin(){
-
+            startCooldown() {
+                let countdown = this.cooldownTime;
+                const interval = setInterval(() => {
+                    countdown--;
+                    this.cooldownTime = countdown; // 更新剩余时间
+                    if (countdown <= 0) {
+                        clearInterval(interval);
+                        this.isCooldown = false;
+                        this.cooldownTime = 60; // 重置冷却时间
+                    }
+                }, 1000);
+            },
+            TurnToLogin() {
+                window.location.href = "login.html";
             }
         }
-    })
-
+    });
 </script>
 
 </body>

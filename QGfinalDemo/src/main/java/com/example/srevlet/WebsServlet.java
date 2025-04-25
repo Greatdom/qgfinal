@@ -256,7 +256,7 @@ public class WebsServlet extends BaseServlet {
 
         Result result =null;
         if(checkCodeGen==null||!(checkCodeGen.equals(checkcode))){
-            result=Result.error(ResultCodeEnum.CHECK_CODE_ERROR);
+            result=Result.error(ResultCodeEnum.CODE_ERROR);
         }else{
             if("ADMIN".equals(role)){
                 AdminService adminService=new AdminService();
@@ -314,9 +314,51 @@ public class WebsServlet extends BaseServlet {
 
         if (isSent) {
             response.getWriter().write("验证码已发送到您的邮箱: " + email);
+            HttpSession session=request.getSession();
+            session.setAttribute("verificationCodeGen",verificationCode);
+            System.out.println("verificationCode:"+verificationCode);
+            response.getWriter().write("发送验证码成功");
         } else {
             response.getWriter().write("发送验证码失败，请稍后再试");
         }
+    }
+    public void SaveChangePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String email=request.getParameter("email");
+        String password=request.getParameter("password");
+        String code=request.getParameter("code");
+        String role=request.getParameter("role");
+        Account account=new Account();
+        account.setEmail(email);
+        Result result = null;
+        HttpSession session=request.getSession();
+        String codeGen = (String) session.getAttribute("verificationCodeGen");
+        if(!(code.equals(codeGen))){
+            result = Result.error(ResultCodeEnum.CODE_ERROR);
+        }else{
+            if("ADMIN".equals(role)){
+                AdminService adminService=new AdminService();
+                account=adminService.selectSingle(account);
+                if(account!=null){
+                    account.setPassword(password);
+                    adminService.update(account);
+                    result=Result.success(account);
+                }else result=Result.error(ResultCodeEnum.USER_NOT_EXIST_ERROR);
+            }else if("USER".equals(role)){
+                UserService userService=new UserService();
+                account=userService.selectSingle(account);
+                if(account!=null){
+                    account.setPassword(password);
+                    userService.update(account);
+                    result=Result.success(account);
+                }else result=Result.error(ResultCodeEnum.USER_NOT_EXIST_ERROR);
+            }else{
+                result=Result.error(ResultCodeEnum.USER_NOT_EXIST_ERROR);
+            }
+        }
+
+
+        String jsonStr=JSON.toJSONString(result);
+        response.getWriter().write(jsonStr);
     }
 }
 

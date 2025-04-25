@@ -13,11 +13,11 @@ public enum ResultCodeEnum {
     USER_ACCOUNT_ERROR("5003", "账号或密码错误"),
     USER_NOT_EXIST_ERROR("5004", "用户似乎不存在"),
     PARAM_PASSWORD_ERROR("5005", "原密码输入错误"),
-    CHECK_CODE_ERROR("5006","验证码错误"),
     PRODUCT_BUY_ERROR("5008","无法购买商品"),
     BAN_ERROR("5009","您已被封禁,请进行申诉以求解封账号！-->[web.example.com]"),
     REPORT_ERROR("5010","不能重复举报"),
-    AVATAR_ERROR("5011","图片上传失败");
+    AVATAR_ERROR("5011","图片上传失败"),
+    CODE_ERROR("5012","验证码错误");
 
     public String code;
     public String msg;

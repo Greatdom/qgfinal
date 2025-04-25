@@ -56,6 +56,7 @@
     </div>
 
     <div style="text-align: end"><p @click="TurnToRegister">没有账号？<strong>注册</strong></p></div>
+    <div style="text-align: end"><p @click="TurnToEmail">忘记密码？<strong>找回</strong></p></div>
     <div>
       <button class="formButton" @click="Login">登录</button>
     </div>
@@ -111,6 +112,9 @@
     methods: {
       TurnToRegister(){
         window.location.href = "register.html";
+      },
+      TurnToEmail(){
+        window.location.href = "SendEmail.html";
       },
       Load(){
         this.Username="";

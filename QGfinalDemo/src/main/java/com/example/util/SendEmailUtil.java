@@ -16,14 +16,14 @@ public class SendEmailUtil {
 
     // 发送邮件的方法
     public boolean sendEmail(String recipientEmail, String verificationCode) {
-        final String username = "www778005729@outlook.com"; // 发件人邮箱
-        final String password = "Aa1341512355"; // 发件人邮箱密码
+        final String username = "778005729@qq.com"; // 发件人邮箱
+        final String password = "ymeauzqbbjoabchh"; // 使用应用密码
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp-mail.outlook.com"); // 邮箱SMTP服务器
-        props.put("mail.smtp.port", "587"); // 邮箱SMTP端口
+        props.put("mail.smtp.host", "smtp.qq.com"); // Outlook的SMTP服务器
+        props.put("mail.smtp.port", "587"); // Outlook的SMTP端口
 
         Session session = Session.getInstance(props, new Authenticator() {
             @Override
@@ -38,7 +38,6 @@ public class SendEmailUtil {
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
             message.setSubject("您的验证码");
             message.setText("您的验证码是: " + verificationCode);
-
             Transport.send(message);
             return true;
         } catch (MessagingException e) {

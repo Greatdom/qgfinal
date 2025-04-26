@@ -85,6 +85,7 @@
             <p>举报结果:{{FocusReport?.result||"无结果数据"}}</p>
             <div v-if="FocusReport&&FocusReport.reportType==='用户'">
                 <strong>关于用户</strong>
+                <img style="width: 100px;height: 70px" :src="(currentUser&&currentUser.avatar!=null&&currentUser.avatar!=='')? '../../../file/'+currentUser.avatar : '../../asset/img/Avatar.png' " alt="">
                 <p>ID:{{FocusCounterPart?.id||"无ID数据"}}</p>
                 <p>账号:{{FocusCounterPart?.username||"无账号数据"}}</p>
                 <p>昵称:{{FocusCounterPart?.name||"无昵称数据"}}</p>

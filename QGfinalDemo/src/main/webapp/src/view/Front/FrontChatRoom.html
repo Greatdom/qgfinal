@@ -64,10 +64,12 @@
                 <tr style="height: 16%" v-for="sentence in SentenceTable" :key="sentence.id">
                     <td style="color: brown"
                         v-if="sentence&&currentUser&&sentence.userId===currentUser.id&&sentence.userRole===currentUser.role">
+                        <img style="width: 60px;height: 40px" :src="(currentUser&&currentUser.avatar!=null&&currentUser.avatar!=='')? '../../../file/'+currentUser.avatar : '../../asset/img/Avatar.png' " alt="">
                         {{ currentUser.name }}:{{ sentence?.content||'无内容' }}---{{ sentence?.sentenceTime||'无时间' }}
                     </td>
                     <td v-else style="color: orange" >
                         {{ sentence?.sentenceTime||'无时间' }}---{{ sentence?.content||'无内容' }}:{{ FocusCounterPart }}
+                        <img style="width: 60px;height: 40px" :src="(FocusCounterPartAvatar!=null&&FocusCounterPartAvatar!=='')? '../../../file/'+FocusCounterPartAvatar : '../../asset/img/Avatar.png' " alt="">
                     </td>
                 </tr>
                 </tbody>
@@ -124,6 +126,7 @@
 
             FocusSession:null,
             FocusCounterPart:null,
+            FocusCounterPartAvatar:null,
             SessionTable:null,
             SentenceTable:null,
 
@@ -181,6 +184,7 @@
                 }
                 if(userRole==="SYSTEM"){
                     this.FocusCounterPart="系统管理员";
+                    this.FocusCounterPartAvatar="";
                     return;
                 }
                 let LoadHttp;
@@ -203,6 +207,7 @@
 
                         if (storedUser) {
                             this.FocusCounterPart = storedUser.data.name;
+                            this.FocusCounterPartAvatar=storedUser.data.avatar;
                             if(this.FocusCounterPart==null||this.FocusCounterPart===""){
                                 this.FocusCounterPart=storedUser.data.username;
                             }

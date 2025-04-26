@@ -72,7 +72,7 @@
                 </tr>
                 <tr v-for="user in userTable" :key="user.id" @click="FocusUser=user">
                     <td>{{ user?.id||'无ID数据'}}</td>
-                    <td><img style="width: 100%;height: 100%" :src="(currentUser&&currentUser.avatar!=null&&currentUser.avatar!=='')? '../../../file/'+currentUser.avatar : '../../asset/img/Avatar.png' " alt=""></td>
+                    <td><img style="width: 100%;height: 100%" :src="(user&&user.avatar!=null&&user.avatar!=='')? '../../../file/'+user.avatar : '../../asset/img/Avatar.png' " alt=""></td>
                     <td>{{ user?.username||'无账号数据'}}</td>
                     <td>{{ user?.name||'无昵称数据'}}</td>
                     <td>{{ user?.email||'无邮箱数据'}}</td>

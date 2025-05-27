@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="../js/vue.js"></script>
+<link rel="stylesheet" href="../asset/css/global.css">
+<body>
+
+
+
+<div id="app">
+
+    <button @click="log">
+        www
+    </button>
+
+</div>
+
+
+    <script>
+        const app=new Vue({
+            el:'#app',
+            data:{
+
+            },
+            methods:{
+
+                log(){
+                    alert("www");
+                    axios.get('/QGfinalDemo_war/WebsServlet', {
+                        params: {
+                            method: 'login',
+                            username:'admin',
+                            password:'admin',
+                            role:'ADMIN',
+                            remember:'false',
+                        }
+                    })
+                        .then(function (response) {
+                            console.log(response);
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                }
+            }
+
+        })
+    </script>
+</body>
+</html>

@@ -70,8 +70,9 @@ public class ProductMapper {
         Integer stock = product.getStock();
         String category = product.getCategory();
         String avatar = product.getAvatar();
-        String updateSql = "UPDATE product SET name=?,description=?,price=?,stock=?,category=?,avatar=? WHERE id = ?";
-        return CRUDUtils.update(updateSql,name,description,price,stock,category,avatar,id);
+        String status = product.getPublishStatus();
+        String updateSql = "UPDATE product SET name=?,description=?,price=?,stock=?,category=?,avatar=?,publish_status=? WHERE id = ?";
+        return CRUDUtils.update(updateSql,name,description,price,stock,category,avatar,status,id);
     }
     public int ChangePublishStatus(Product product) {
         if(product==null){

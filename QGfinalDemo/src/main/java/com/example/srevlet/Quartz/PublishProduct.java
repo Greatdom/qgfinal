@@ -20,6 +20,7 @@ public class PublishProduct implements Job {
         for (Product product : productList) {
             System.out.println(product);
             if(TimeUtil.IsHeadTimeBefore(product.getPublishTime(),hindTime)){
+
                 product.setPublishStatus(ProductStatusEnum.PUBLISHED.getValue());
                 productMapper.update(product);
                 SentenceService sentenceService = new SentenceService();
